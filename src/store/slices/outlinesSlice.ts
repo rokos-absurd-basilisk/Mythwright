@@ -13,6 +13,7 @@ export interface OutlinesSlice {
   deleteBeat: (id: UUID) => void
   reorderBeats: (outlineId: UUID, ids: UUID[]) => void
   copyBeat: (beatId: UUID, toOutlineId: UUID) => Beat
+  reorderOutlines: (storyId: UUID, ids: UUID[]) => void
 }
 
 export const createOutlinesSlice: StateCreator<OutlinesSlice> = (set, get) => ({
@@ -117,5 +118,15 @@ export const createOutlinesSlice: StateCreator<OutlinesSlice> = (set, get) => ({
     }
     set(s => ({ beats: [...s.beats, copy] }))
     return copy
+  },
+
+  reorderOutlines: (storyId, ids) => {
+    set(s => ({
+      outlines: s.outlines.map(o => {
+        if (o.storyId !== storyId) return o
+        const idx = ids.indexOf(o.id)
+        return idx >= 0 ? { ...o, position: idx } : o
+      })
+    }))
   },
 })

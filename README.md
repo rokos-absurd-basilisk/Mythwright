@@ -1,73 +1,76 @@
-# React + TypeScript + Vite
+# Mythwright
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> *Forge your narrative.*
 
-Currently, two official plugins are available:
+A visual story outlining and plotting web application for novelists, screenwriters, and storytellers. Built with React 19 + Vite, Zustand, TipTap, dnd-kit, and React Flow.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **7 plotting frameworks** — from Booker's archetypes to Save the Cat to a freeform Toolbox
+- **Vonnegut curve editor** — interactive Bézier freehand mode + mathematical Formula Mode with 10 curve types, sharp-shift detection
+- **Scrivener-inspired layout** — Binder | Canvas | Inspector three-panel UI
+- **4 view modes** — Framework, Corkboard, Mindmap (React Flow), Outliner
+- **Rich Inspector** — TipTap notes, synopsis, snapshots, bookmarks, comments
+- **Offline-first** — localStorage primary store, Supabase background sync
+- **Export** — JSON, Markdown, HTML, PNG
+- **Tutorial mode** — Coach marks with animated zigzag wire, workflow modals
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+| Layer | Choice |
+|-------|--------|
+| Framework | React 19 + Vite 8 |
+| State | Zustand v5 (slices + `useShallow`) |
+| Drag & Drop | dnd-kit |
+| Mindmap | @xyflow/react (React Flow) |
+| Rich Text | TipTap (headless, ProseMirror) |
+| Styling | Tailwind CSS v4 |
+| Animations | CSS transitions + Framer Motion (targeted) |
+| Sync | localStorage-first + Supabase background sync |
+| Auth | Supabase Auth |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+cp .env.example .env          # optional — Supabase sync
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open [http://localhost:5173](http://localhost:5173).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Self-hosting
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
+# Deploy dist/ to any static host: Nginx, Cloudflare Pages, Vercel, etc.
 ```
+
+## Environment Variables
+
+```
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Both optional — the app works fully offline without Supabase.
+
+## Branch Structure
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | Stable releases |
+| `dev` | Active development |
+
+## Roadmap
+
+- [x] Part 1 — Scaffold, design tokens, Zustand stores, AppShell
+- [x] Part 2 — All 7 frameworks, Vonnegut Formula Mode, sharp-shift detection
+- [x] Part 3 — Inspector (TipTap, snapshots, bookmarks, comments), Corkboard, Mindmap, Outliner
+- [ ] Part 4 — Export system, Split Mode, dnd-kit Binder sorting
+- [ ] Part 5 — Supabase auth + sync, Tutorial mode
+- [ ] Part 6 — Polish, accessibility, performance
+
+## License
+
+MIT
