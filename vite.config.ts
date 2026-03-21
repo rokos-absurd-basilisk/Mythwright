@@ -16,4 +16,13 @@ export default defineConfig({
       '@styles': resolve(__dirname, 'src/styles'),
     },
   },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rolldownOptions: {
+      output: {
+        // Split large vendor chunks for faster initial load
+        codeSplitting: true,
+      },
+    },
+  },
 })

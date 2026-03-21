@@ -9,22 +9,28 @@ import { SevenPointFramework } from '../frameworks/SevenPointFramework'
 import { SaveTheCatFramework } from '../frameworks/SaveTheCatFramework'
 import { ToolboxFramework }    from '../frameworks/ToolboxFramework'
 import { CorkboardView }       from '../corkboard/CorkboardView'
-import { MindmapView }         from '../mindmap/MindmapView'
+import { lazy, Suspense } from 'react'
+const MindmapView = lazy(() => import('../mindmap/MindmapView').then(m => ({ default: m.MindmapView })))
 import { OutlinerView }        from '../outliner/OutlinerView'
 
 const FRAMEWORK_NAMES: Record<number, string> = {
-  1:"Booker's 7 Types",      2:"Vonnegut's Story Shapes",
-  3:"3-Act Structure",       4:"5-Act / Freytag's Pyramid",
-  5:"7-Point Plot",          6:"Save the Cat",
-  7:"The Toolbox",
+  1:"Booker's 7 Types", 2:"Vonnegut's Story Shapes",
+  3:"3-Act Structure",  4:"5-Act / Freytag's Pyramid",
+  5:"7-Point Plot",     6:"Save the Cat", 7:"The Toolbox",
 }
 const EASE = [0, 0, 0.2, 1] as const
 
-export function CanvasContainer() {
-  const { activeOutlineId, activeViewMode } = useUI()
-  const outline = useBoundStore(s => s.outlines.find(o => o.id === activeOutlineId))
+interface CanvasContainerProps {
+  /** When set (Split Mode), override the active outline from UIState */
+  forceOutlineId?: string
+}
 
-  if (!activeOutlineId || !outline) {
+export function CanvasContainer({ forceOutlineId }: CanvasContainerProps) {
+  const { activeOutlineId, activeViewMode } = useUI()
+  const resolvedId = forceOutlineId ?? activeOutlineId
+  const outline = useBoundStore(s => s.outlines.find(o => o.id === resolvedId))
+
+  if (!resolvedId || !outline) {
     return (
       <main className="flex-1 flex flex-col items-center justify-center gap-4"
         style={{ background:'var(--bg-primary)' }}>
@@ -39,7 +45,7 @@ export function CanvasContainer() {
               No Outline Selected
             </h2>
             <p className="text-sm text-[var(--text-muted)]">
-              Select or create an outline in the Binder to begin plotting.
+              Select or create an outline to begin plotting.
             </p>
           </div>
         </motion.div>
@@ -51,7 +57,7 @@ export function CanvasContainer() {
 
   const renderView = () => {
     if (activeViewMode === 'corkboard') return <CorkboardView outlineId={id} />
-    if (activeViewMode === 'mindmap')   return <MindmapView   outlineId={id} />
+    if (activeViewMode === 'mindmap')   return <Suspense fallback={<div className="flex-1 flex items-center justify-center text-[var(--text-muted)] text-sm">Loading mindmap…</div>}><MindmapView outlineId={id} /></Suspense>
     if (activeViewMode === 'outliner')  return <OutlinerView  outlineId={id} />
     switch (outline.frameworkId) {
       case 1: return <BookerFramework     outlineId={id} />
@@ -67,23 +73,25 @@ export function CanvasContainer() {
 
   return (
     <main className="flex-1 flex flex-col overflow-hidden" style={{ background:'var(--bg-primary)' }}>
-      {/* Framework identity strip */}
-      <div
-        className="flex items-center gap-2 px-4 flex-shrink-0 border-b border-[var(--border-subtle)]"
-        style={{ height:'34px', background:'var(--bg-secondary)' }}
-      >
-        <GitBranch size={12} className="text-[var(--accent-orange)] flex-shrink-0" />
-        <span className="text-[10px] uppercase tracking-widest font-[family-name:var(--font-heading)] font-semibold text-[var(--accent-orange)] flex-shrink-0">
-          {FRAMEWORK_NAMES[outline.frameworkId]}
-        </span>
-        <span className="text-[10px] text-[var(--text-muted)] truncate min-w-0">
-          — {outline.title}
-        </span>
-      </div>
+      {/* Framework identity strip — only show when not in split mode */}
+      {!forceOutlineId && (
+        <div
+          className="flex items-center gap-2 px-4 flex-shrink-0 border-b border-[var(--border-subtle)]"
+          style={{ height:'34px', background:'var(--bg-secondary)' }}
+        >
+          <GitBranch size={12} className="text-[var(--accent-orange)] flex-shrink-0" />
+          <span className="text-[10px] uppercase tracking-widest font-[family-name:var(--font-heading)] font-semibold text-[var(--accent-orange)] flex-shrink-0">
+            {FRAMEWORK_NAMES[outline.frameworkId]}
+          </span>
+          <span className="text-[10px] text-[var(--text-muted)] truncate min-w-0">
+            — {outline.title}
+          </span>
+        </div>
+      )}
 
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
-          key={`${activeOutlineId}-${outline.frameworkId}-${activeViewMode}`}
+          key={`${resolvedId}-${outline.frameworkId}-${activeViewMode}`}
           className="flex-1 flex flex-col overflow-hidden"
           initial={{ opacity:0, y:6 }} animate={{ opacity:1, y:0 }}
           exit={{ opacity:0, y:-4 }}
