@@ -130,3 +130,11 @@ export const createOutlinesSlice: StateCreator<OutlinesSlice> = (set, get) => ({
     }))
   },
 })
+
+// Exposed for Binder drag-sort
+export function reorderOutlines(outlineIds: string[], allOutlines: import('../../types').Outline[]) {
+  return outlineIds.map((id, i) => {
+    const o = allOutlines.find(x => x.id === id)!
+    return { ...o, position: i }
+  })
+}
