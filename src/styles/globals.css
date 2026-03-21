@@ -1,0 +1,179 @@
+/* ============================================================
+   MYTHWRIGHT — GLOBAL STYLES
+   ============================================================ */
+@import './tokens.css';
+@import './animations.css';
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Custom scrollbar ──────────────────────────────────── */
+::-webkit-scrollbar              { width: 6px; height: 6px; }
+::-webkit-scrollbar-track        { background: transparent; }
+::-webkit-scrollbar-thumb        { background: var(--border); border-radius: var(--radius-pill); }
+::-webkit-scrollbar-thumb:hover  { background: var(--border-active); }
+
+/* ── Focus ring ────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent-teal);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Selection ─────────────────────────────────────────── */
+::selection {
+  background: var(--accent-teal-20);
+  color: var(--text-primary);
+}
+
+/* ── Typography helpers ────────────────────────────────── */
+.font-heading  { font-family: var(--font-heading); }
+.font-body     { font-family: var(--font-body); }
+.font-mono     { font-family: var(--font-mono); }
+
+.text-display    { font: var(--text-display);    letter-spacing: 0.02em; }
+.text-heading    { font: var(--text-heading);    letter-spacing: 0.03em; }
+.text-subheading { font: var(--text-subheading); letter-spacing: 0.06em; text-transform: uppercase; }
+.text-body       { font: var(--text-body); }
+.text-body-sm    { font: var(--text-body-sm); }
+.text-label      { font: var(--text-label); letter-spacing: 0.08em; text-transform: uppercase; }
+.text-mono       { font: var(--text-mono); }
+
+/* ── Layout helpers ────────────────────────────────────── */
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Panel transitions ─────────────────────────────────── */
+.panel-slide {
+  transition: width var(--dur-medium) var(--ease-in-out),
+              opacity var(--dur-normal) var(--ease-in-out);
+  overflow: hidden;
+}
+
+/* ── Toolbar icon button ───────────────────────────────── */
+.toolbar-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  transition: color var(--dur-fast), background-color var(--dur-fast);
+  flex-shrink: 0;
+}
+.toolbar-icon-btn:hover {
+  color: var(--text-primary);
+  background-color: rgba(255,255,255,0.06);
+}
+
+/* ── TipTap editor prose styles ─────────────────────────── */
+.tiptap-editor {
+  outline: none;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.tiptap-editor p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+.tiptap-editor h2 {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+.tiptap-editor ul, .tiptap-editor ol {
+  padding-left: 1.2em;
+  color: var(--text-secondary);
+}
+.tiptap-editor li { margin: 2px 0; }
+.tiptap-editor blockquote {
+  border-left: 3px solid var(--accent-orange);
+  padding-left: 10px;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin: 8px 0;
+}
+.tiptap-editor strong { color: var(--text-primary); font-weight: 600; }
+.tiptap-editor em { color: var(--text-secondary); }
+.tiptap-editor p { margin: 4px 0; color: var(--text-secondary); }
+
+/* ── TipTap Editor ─────────────────────────────────────────────── */
+.tiptap-editor {
+  outline: none;
+  min-height: 120px;
+  line-height: 1.7;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+}
+.tiptap-editor p { margin: 0 0 0.5em; }
+.tiptap-editor p:last-child { margin-bottom: 0; }
+.tiptap-editor h2 {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent-orange);
+  margin: 0.75em 0 0.35em;
+}
+.tiptap-editor ul, .tiptap-editor ol {
+  padding-left: 1.4em;
+  margin: 0.3em 0;
+}
+.tiptap-editor li { margin: 0.15em 0; }
+.tiptap-editor blockquote {
+  border-left: 3px solid var(--accent-teal);
+  padding-left: 0.75em;
+  margin: 0.5em 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+.tiptap-editor code {
+  font-family: var(--font-mono);
+  background: var(--bg-input);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+/* Placeholder */
+.tiptap-editor p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}

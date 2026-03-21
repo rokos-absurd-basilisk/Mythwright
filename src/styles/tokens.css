@@ -1,0 +1,83 @@
+/* ============================================================
+   MYTHWRIGHT — DESIGN TOKENS
+   ============================================================ */
+:root {
+  --bg-primary:        #1a3a3a;
+  --bg-secondary:      #0d2626;
+  --bg-card:           #1f4444;
+  --bg-card-hover:     #254f4f;
+  --bg-overlay:        rgba(13, 38, 38, 0.92);
+  --bg-input:          #163030;
+  --bg-split:          #112020;
+  --bg-toolbar:        #0d2626;
+  --bg-tooltip:        #0a1f1f;
+  --accent-orange:     #e8933a;
+  --accent-orange-dim: #c4762a;
+  --accent-orange-10:  rgba(232, 147, 58, 0.10);
+  --accent-orange-20:  rgba(232, 147, 58, 0.20);
+  --accent-teal:       #5ec8c8;
+  --accent-teal-dim:   #3da8a8;
+  --accent-teal-10:    rgba(94, 200, 200, 0.10);
+  --accent-teal-20:    rgba(94, 200, 200, 0.20);
+  --text-primary:      #ffffff;
+  --text-secondary:    #a8c8c8;
+  --text-muted:        #5a8888;
+  --text-orange:       #e8933a;
+  --border:            #2a5050;
+  --border-active:     #5ec8c8;
+  --border-drag:       #e8933a;
+  --border-subtle:     #1e3c3c;
+  --status-draft:      #5a8888;
+  --status-progress:   #e8933a;
+  --status-final:      #5ec8c8;
+  --status-blocked:    #c45050;
+  --spotlight-gold:    #f0b429;
+  --spotlight-wire:    #f0b429;
+  --dim-overlay:       rgba(0, 0, 0, 0.72);
+  --sharp-shift-glow:  #f0b429;
+  --sharp-shift-chip:  #e8933a;
+  --shadow-card:       0 2px 8px rgba(0,0,0,0.4);
+  --shadow-card-drag:  0 12px 32px rgba(0,0,0,0.6);
+  --shadow-modal:      0 24px 64px rgba(0,0,0,0.7);
+  --shadow-panel:      4px 0 16px rgba(0,0,0,0.3);
+  --font-heading:      'Oswald', sans-serif;
+  --font-body:         'Inter', sans-serif;
+  --font-mono:         'JetBrains Mono', monospace;
+  --space-1:   4px; --space-2:  8px;  --space-3:  12px;
+  --space-4:  16px; --space-6: 24px;  --space-8:  32px;
+  --space-12: 48px;
+  --radius-sm: 4px; --radius-md: 6px; --radius-lg: 10px;
+  --radius-xl: 12px; --radius-pill: 999px;
+  --binder-width: 240px;
+  --inspector-width: 320px;
+  --toolbar-height: 48px;
+  --dur-instant: 1ms;   --dur-fast:   120ms;
+  --dur-normal:  180ms; --dur-medium: 220ms; --dur-slow: 300ms;
+  --ease-out:    cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --ease-in:     cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1.0);
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: var(--dur-instant) !important;
+    animation-duration:  var(--dur-instant) !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ── Framework canvas (deep navy — matches video images 8–19) ─── */
+--bg-canvas:          #0d1b2e;
+--bg-canvas-alt:      #0a1628;
+--canvas-line-glow:   rgba(94, 200, 200, 0.35);  /* Act 2 teal glow */
+--canvas-label-teal:  #5ec8c8;                    /* sub-beat labels */
+--canvas-label-white: #ffffff;                    /* act labels */
+
+/* ── Framework canvas (dark navy — matches reference images 8-19) ── */
+--canvas-navy:       #0d1b3e;
+--canvas-navy-light: #0f2040;
+--canvas-line-orange: #e8933a;
+--canvas-line-thick:  5px;
+--canvas-dot-white:   #ffffff;
+--canvas-dot-teal:    #5ec8c8;
+--canvas-label-white: #ffffff;
+--canvas-divider:     rgba(255,255,255,0.5);
