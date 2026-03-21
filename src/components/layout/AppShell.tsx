@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBoundStore, useUI } from '../../store'
 import { Toolbar }               from './Toolbar'
@@ -6,22 +6,33 @@ import { LeftColumn }            from '../narrative/LeftColumn'
 import { NarrativeAnchorStrip }  from '../narrative/NarrativeAnchorStrip'
 import { CanvasContainer }       from '../canvas/CanvasContainer'
 import { InspectorPanel }        from '../inspector/InspectorPanel'
+import { QuickSearch }           from '../search/QuickSearch'
+import { OnboardingTutorial }    from '../tutorial/OnboardingTutorial'
+import { SettingsPanel }         from '../settings/SettingsPanel'
 
 const EASE_IN_OUT = [0.4, 0, 0.2, 1] as const
 
 export function AppShell() {
-  const { focusMode } = useUI()
-  const setFocusMode  = useBoundStore(s => s.setFocusMode)
+  const { focusMode }   = useUI()
+  const setFocusMode    = useBoundStore(s => s.setFocusMode)
+  const [searchOpen,   setSearchOpen]   = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
-  // F11 / Escape keyboard shortcuts
+  // F11 / Escape / Cmd+K
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'F11')   { e.preventDefault(); setFocusMode(!focusMode) }
-      if (e.key === 'Escape' && focusMode) setFocusMode(false)
+      if (e.key === 'F11') { e.preventDefault(); setFocusMode(!focusMode) }
+      if (e.key === 'Escape') {
+        if (focusMode) setFocusMode(false)
+        else if (searchOpen) setSearchOpen(false)
+        else if (settingsOpen) setSettingsOpen(false)
+      }
+      const mod = e.metaKey || e.ctrlKey
+      if (mod && e.key === 'k') { e.preventDefault(); setSearchOpen(s => !s) }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [focusMode, setFocusMode])
+  }, [focusMode, setFocusMode, searchOpen, settingsOpen])
 
   return (
     <div className="flex flex-col h-full overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
@@ -34,17 +45,20 @@ export function AppShell() {
             exit={{ opacity:0, height:0 }}
             transition={{ duration:0.2, ease:EASE_IN_OUT }}
             className="overflow-hidden flex-shrink-0">
-            <Toolbar />
+            <Toolbar
+              onSearchOpen={() => setSearchOpen(true)}
+              onSettingsOpen={() => setSettingsOpen(true)}
+            />
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Three-panel body */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left column — bi-modal: Binder ↔ Narrative Context Panel */}
+        {/* Left column — bi-modal */}
         <LeftColumn />
 
-        {/* Centre: Narrative Anchor Strip + Canvas */}
+        {/* Centre: Anchor Strip + Canvas */}
         <div className="flex-1 flex flex-col overflow-hidden">
           <AnimatePresence initial={false}>
             {!focusMode && (
@@ -76,6 +90,11 @@ export function AppShell() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Global overlays */}
+      <QuickSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <OnboardingTutorial />
+      <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   )
 }
