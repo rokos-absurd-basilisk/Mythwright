@@ -57,6 +57,7 @@ export function Toolbar({ onSearchOpen, onSettingsOpen }: ToolbarProps) {
     <>
       <header
         className="flex items-center gap-2 px-3 flex-shrink-0 z-10 border-b border-[var(--border)]"
+        role="banner"
         style={{ height:'var(--toolbar-height)', background:'var(--bg-toolbar)' }}>
 
         {/* Left: Binder toggle + breadcrumb */}
@@ -85,7 +86,7 @@ export function Toolbar({ onSearchOpen, onSettingsOpen }: ToolbarProps) {
         </div>
 
         {/* Centre: View tabs */}
-        <nav className="flex-1 flex items-center justify-center gap-0.5">
+        <nav className="flex-1 flex items-center justify-center gap-0.5" aria-label="View modes">
           {activeOutlineId && VIEW_TABS.map(({ id, label, Icon }) => {
             const active = activeViewMode === id
             return (

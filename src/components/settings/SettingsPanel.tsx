@@ -10,7 +10,6 @@ import { clsx } from 'clsx'
 import { useBoundStore } from '../../store'
 import { useSupabaseAuth } from '../../hooks/useSupabaseAuth'
 import { isSupabaseAvailable } from '../../lib/supabaseClient'
-import { resetOnboarding } from '../tutorial/OnboardingTutorial'
 
 const EASE = [0, 0, 0.2, 1] as const
 
@@ -49,6 +48,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const { user, signOut } = useSupabaseAuth()
   const syncStatus  = useBoundStore(s => s.syncStatus)
   const lastSyncAt  = useBoundStore(s => s.lastSyncAt)
+  const resetTutorial  = useBoundStore(s => s.resetTutorial)
   const [clearing, setClearing] = useState(false)
   const [replayDone, setReplayDone] = useState(false)
 
@@ -65,9 +65,9 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   }
 
   const handleReplayTutorial = () => {
-    resetOnboarding()
+    resetTutorial()
     setReplayDone(true)
-    setTimeout(() => { onClose(); window.location.reload() }, 800)
+    setTimeout(() => { onClose() }, 600)
   }
 
   return (
@@ -81,6 +81,9 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
 
           {/* Panel */}
           <motion.aside
+            role="dialog"
+            aria-modal="true"
+            aria-label="Settings"
             className="fixed right-0 top-0 bottom-0 z-[710] flex flex-col border-l border-[var(--border)] overflow-hidden"
             style={{ width:'360px', background:'var(--bg-secondary)', boxShadow:'-4px 0 24px rgba(0,0,0,0.3)' }}
             initial={{ x:'100%' }} animate={{ x:0 }} exit={{ x:'100%' }}

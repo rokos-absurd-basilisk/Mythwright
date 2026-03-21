@@ -144,6 +144,10 @@ export function QuickSearch({ open, onClose }: QuickSearchProps) {
                 onChange={e => { setQuery(e.target.value); setCursor(0) }}
                 onKeyDown={handleKey}
                 placeholder="Search stories, outlines, beats, notes…"
+                role="combobox"
+                aria-expanded={results.length > 0}
+                aria-controls="qs-results"
+                aria-autocomplete="list"
                 className="flex-1 bg-transparent text-[14px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none"
               />
               {query && (
@@ -158,7 +162,7 @@ export function QuickSearch({ open, onClose }: QuickSearchProps) {
             </div>
 
             {/* Results */}
-            <div className="max-h-[380px] overflow-y-auto py-1">
+            <div id="qs-results" role="listbox" aria-label="Search results" className="max-h-[380px] overflow-y-auto py-1">
               {query.trim() === '' && (
                 <p className="px-4 py-6 text-center text-[13px] text-[var(--text-muted)]">
                   Start typing to search across all your stories, outlines, and beats.

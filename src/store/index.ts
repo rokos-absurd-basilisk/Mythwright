@@ -1,12 +1,16 @@
 import { create } from 'zustand'
 import { devtools, persist, createJSONStorage } from 'zustand/middleware'
 import { useShallow } from 'zustand/shallow'
-import { createStoriesSlice, type StoriesSlice } from './slices/storiesSlice'
+import { createStoriesSlice,  type StoriesSlice  } from './slices/storiesSlice'
 import { createOutlinesSlice, type OutlinesSlice } from './slices/outlinesSlice'
-import { createUISlice, type UISlice } from './slices/uiSlice'
-import { createSyncSlice, type SyncSlice } from './slices/syncSlice'
+import { createUISlice,       type UISlice       } from './slices/uiSlice'
+import { createSyncSlice,     type SyncSlice     } from './slices/syncSlice'
+import { createTutorialSlice, type TutorialSlice } from './slices/tutorialSlice'
+import { createMindmapSlice,  type MindmapSlice  } from './slices/mindmapSlice'
 
-export type BoundStore = StoriesSlice & OutlinesSlice & UISlice & SyncSlice
+export type BoundStore =
+  StoriesSlice & OutlinesSlice & UISlice & SyncSlice &
+  TutorialSlice & MindmapSlice
 
 export const useBoundStore = create<BoundStore>()(
   devtools(
@@ -16,21 +20,32 @@ export const useBoundStore = create<BoundStore>()(
         ...createOutlinesSlice(...a),
         ...createUISlice(...a),
         ...createSyncSlice(...a),
+        ...createTutorialSlice(...a),
+        ...createMindmapSlice(...a),
       }),
       {
         name: 'mythwright',
         storage: createJSONStorage(() => localStorage),
-        partialize: (state) => ({
-          stories:             state.stories,
-          notes:               state.notes,
-          outlines:            state.outlines,
-          beats:               state.beats,
-          syncQueue:           state.syncQueue,
-          lastSyncAt:          state.lastSyncAt,
-          binderOpen:          state.binderOpen,
-          inspectorOpen:       state.inspectorOpen,
-          expandedStoryIds:    state.expandedStoryIds,
-          activeInspectorTab:  state.activeInspectorTab,
+        partialize: (s) => ({
+          // Core data
+          stories:          s.stories,
+          notes:            s.notes,
+          outlines:         s.outlines,
+          beats:            s.beats,
+          // Sync
+          syncQueue:        s.syncQueue,
+          lastSyncAt:       s.lastSyncAt,
+          // UI preferences
+          binderOpen:       s.binderOpen,
+          inspectorOpen:    s.inspectorOpen,
+          expandedStoryIds: s.expandedStoryIds,
+          // Tutorial progress
+          tutorialProgress:  s.tutorialProgress,
+          tutorialDismissed: s.tutorialDismissed,
+          // Mindmap
+          mindmapNodes:    s.mindmapNodes,
+          mindmapEdges:    s.mindmapEdges,
+          mindmapViewport: s.mindmapViewport,
         }),
       }
     ),
@@ -38,7 +53,7 @@ export const useBoundStore = create<BoundStore>()(
   )
 )
 
-// ── Selectors — ALL array returns wrapped in useShallow ─────────
+// ── Selectors (all array returns wrapped in useShallow) ──────
 export const useStories = () =>
   useBoundStore(useShallow(s =>
     s.stories.filter(st => !st.archived).sort((a, b) => a.position - b.position)

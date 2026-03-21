@@ -1,18 +1,17 @@
 // ============================================================
 // MYTHWRIGHT — ONBOARDING TUTORIAL
-// Defines the full onboarding step registry and manages
-// first-launch detection via localStorage.
+// Uses tutorialSlice for persistent progress tracking.
+// Syncs to Supabase via the standard sync queue.
 // ============================================================
 import { useEffect, useState } from 'react'
+import { useBoundStore } from '../../store'
 import { TutorialSystem, type TutorialStep } from './TutorialSystem'
-
-const STORAGE_KEY = 'mythwright-onboarding-done'
 
 const ONBOARDING_STEPS: TutorialStep[] = [
   {
     id: 'onboard-01', mode: 'workflow',
     title: 'Welcome to Mythwright',
-    body: 'Mythwright is a story-outlining workspace built for novelists, screenwriters, and storytellers. You\'ll plot your stories using 7 different frameworks — from a simple archetype selector to a mathematical fortune curve. Let\'s take a quick tour.',
+    body: "Mythwright is a story-outlining workspace for novelists, screenwriters, and storytellers. You\'ll plot your stories using 7 different frameworks — from a simple archetype selector to a mathematical fortune curve. Let\'s take a quick tour.",
   },
   {
     id: 'onboard-02', mode: 'spotlight',
@@ -29,19 +28,19 @@ const ONBOARDING_STEPS: TutorialStep[] = [
   {
     id: 'onboard-04', mode: 'spotlight',
     title: 'The Narrative Anchor Strip',
-    body: 'This strip holds your Dramatic Question, Logline, and Theme. Click any pill to write in the Narrative Context Panel — the same left column, switching modes without shifting the canvas.',
+    body: 'This strip holds your Dramatic Question, Logline, and Theme. Click any pill to write in the Narrative Context Panel — the left column switches without shifting the canvas.',
     target: 'button[title*="Dramatic"]',
   },
   {
     id: 'onboard-05', mode: 'spotlight',
     title: 'The Inspector',
-    body: 'When you click a beat, the Inspector opens on the right with 5 tabs: Notes (rich text), Info, Snapshots, Links, and Comments. In Notes, type #dramatic, #logline, or #theme to create live hyperlinks.',
+    body: 'When you click a beat, the Inspector opens with 5 tabs: Notes, Info, Snapshots, Links, and Comments. In Notes, type #dramatic, #logline, or #theme to link back to your story anchors.',
     target: 'aside:last-of-type',
   },
   {
     id: 'onboard-06', mode: 'workflow',
     title: 'Vonnegut Formula Mode',
-    body: 'In Framework 2, switch to Formula Mode to define your story\'s fortune arc using 10 mathematical curve types. The app detects sharp emotional shifts and suggests micro-beats.',
+    body: 'In Framework 2, switch to Formula Mode to define your fortune arc using 10 mathematical curve types. The app detects sharp emotional shifts and suggests micro-beats.',
     sim: 'formula',
   },
   {
@@ -60,31 +59,34 @@ const ONBOARDING_STEPS: TutorialStep[] = [
 
 export function OnboardingTutorial() {
   const [show, setShow] = useState(false)
+  const tutorialDismissed = useBoundStore(s => s.tutorialDismissed)
+  const markStep          = useBoundStore(s => s.markTutorialStep)
+  const dismissTutorial   = useBoundStore(s => s.dismissTutorial)
+  const isSomeDone        = useBoundStore(s => s.tutorialProgress.length > 0)
 
   useEffect(() => {
-    // Show on first launch — after a short delay so the app renders first
-    if (!localStorage.getItem(STORAGE_KEY)) {
-      const t = setTimeout(() => setShow(true), 1200)
-      return () => clearTimeout(t)
-    }
-  }, [])
+    if (tutorialDismissed || isSomeDone) return
+    const t = setTimeout(() => setShow(true), 1200)
+    return () => clearTimeout(t)
+  }, [tutorialDismissed, isSomeDone])
 
   const finish = () => {
-    localStorage.setItem(STORAGE_KEY, 'true')
+    ONBOARDING_STEPS.forEach(s => markStep(s.id, false))
+    dismissTutorial()
+    setShow(false)
+  }
+
+  const skip = () => {
+    ONBOARDING_STEPS.forEach(s => markStep(s.id, true))
+    dismissTutorial()
     setShow(false)
   }
 
   if (!show) return null
-  return (
-    <TutorialSystem
-      steps={ONBOARDING_STEPS}
-      onComplete={finish}
-      onSkip={finish}
-    />
-  )
+  return <TutorialSystem steps={ONBOARDING_STEPS} onComplete={finish} onSkip={skip} />
 }
 
-// Helper to replay onboarding (called from Settings)
+// Helper for Settings — replay tutorial
 export function resetOnboarding() {
-  localStorage.removeItem(STORAGE_KEY)
+  // Cleared via store action — called from SettingsPanel
 }

@@ -11,6 +11,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { BookPlus, ChevronRight, FilePlus, FileText, GitBranch, Plus, GripVertical } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useBoundStore, useStories, useNotes, useOutlines, useUI } from '../../store'
+import { useToast } from '../shared/Toast'
 import { type Story, type Outline, type FrameworkId } from '../../types'
 import { Badge }  from '../shared/Badge'
 import { Modal }  from '../shared/Modal'
@@ -40,11 +41,13 @@ function NewStoryModal({ open, onClose }: { open: boolean; onClose: () => void }
   const setActiveStory      = useBoundStore(s => s.setActiveStory)
   const toggleExpanded      = useBoundStore(s => s.toggleStoryExpanded)
 
+  const { success } = useToast()
   const submit = () => {
     if (!title.trim()) return
     const s = addStory(title.trim(), colour)
     setActiveStory(s.id)
     toggleExpanded(s.id)
+    success(`Story "${s.title}" created`)
     setTitle(''); setColour('#5ec8c8'); onClose()
   }
 
@@ -87,10 +90,12 @@ function NewOutlineModal({ storyId, open, onClose }: { storyId: string; open: bo
   const addOutline                = useBoundStore(s => s.addOutline)
   const setActiveOutline          = useBoundStore(s => s.setActiveOutline)
 
+  const { success } = useToast()
   const submit = () => {
     if (!title.trim()) return
     const o = addOutline(storyId, title.trim(), frameworkId)
     setActiveOutline(o.id)
+    success(`Outline "${o.title}" created`)
     setTitle(''); onClose()
   }
 
@@ -306,7 +311,7 @@ export function Binder() {
 
   return (
     <>
-      <div className="flex flex-col h-full overflow-hidden" style={{ background: 'var(--bg-secondary)' }}>
+      <div className="flex flex-col h-full overflow-hidden" style={{ background: 'var(--bg-secondary)' }} role="navigation" aria-label="Stories and outlines">
         {/* Header */}
         <div className="flex items-center justify-between px-3 h-10 border-b border-[var(--border-subtle)] flex-shrink-0">
           <span className="text-[11px] uppercase tracking-widest font-[family-name:var(--font-heading)] font-semibold text-[var(--text-muted)]">Stories</span>
@@ -318,7 +323,7 @@ export function Binder() {
         </div>
 
         {/* Story list with dnd-kit sorting */}
-        <div className="flex-1 overflow-y-auto py-1">
+        <div className="flex-1 overflow-y-auto py-1" role="list" aria-label="Stories list">
           {stories.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-12 px-4 text-center">
               <BookPlus size={32} className="text-[var(--text-muted)]" strokeWidth={1.5} />

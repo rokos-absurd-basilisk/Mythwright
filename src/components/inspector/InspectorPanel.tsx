@@ -3,6 +3,7 @@ import { Camera, RotateCcw, X, ExternalLink, Plus } from 'lucide-react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBoundStore, useUI } from '../../store'
+import { useToast } from '../shared/Toast'
 import { type Beat, type BeatSnapshot, type Bookmark as BookmarkType, type NarrativeAnchor } from '../../types'
 import { NotesEditor } from './NotesEditor'
 import { Badge } from '../shared/Badge'
@@ -117,6 +118,7 @@ function MetadataPanel({ beat }: { beat: Beat }) {
 function SnapshotsPanel({ beat }: { beat: Beat }) {
   const updateBeat = useBoundStore(s => s.updateBeat)
 
+  const { success } = useToast()
   const takeSnapshot = () => {
     const snap: BeatSnapshot = {
       id: crypto.randomUUID(),
@@ -127,6 +129,7 @@ function SnapshotsPanel({ beat }: { beat: Beat }) {
     }
     const snaps = [...beat.snapshots, snap].slice(-50)
     updateBeat(beat.id, { snapshots: snaps })
+    success('Snapshot saved')
   }
 
   const restore = (snap: BeatSnapshot) => {
@@ -373,6 +376,7 @@ export function InspectorPanel() {
   return (
     <aside
       className="flex flex-col border-l border-[var(--border)] flex-shrink-0"
+      aria-label="Inspector panel"
       style={{
         width: inspectorOpen ? 'var(--inspector-width)' : '0px',
         background: 'var(--bg-secondary)',

@@ -14,6 +14,7 @@ import {
 } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { useBoundStore, useBeats, useUI } from '../../store'
+import { useToast } from '../shared/Toast'
 import { type Beat, type UUID } from '../../types'
 import { CanvasContainer } from './CanvasContainer'
 
@@ -258,6 +259,8 @@ export function SplitView({ totalHeight }: { totalHeight: number }) {
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
 
+  const { success: toastSuccess } = useToast()
+
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, over } = e
     if (!over || !active.data.current) return
@@ -269,6 +272,7 @@ export function SplitView({ totalHeight }: { totalHeight: number }) {
     if (!targetOutlineId) return
 
     copyBeat(beat.id, targetOutlineId)
+    toastSuccess(`"${beat.title}" copied to ${targetPanel} panel`)
   }
 
   // Active drag beat for overlay

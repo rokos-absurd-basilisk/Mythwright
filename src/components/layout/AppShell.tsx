@@ -52,7 +52,7 @@ export function AppShell() {
   }, [focusMode, splitMode, searchOpen, settingsOpen, setFocusMode, setSplitMode])
 
   return (
-    <div className="flex flex-col h-full overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
+    <div className="flex flex-col h-full overflow-hidden" role="application" aria-label="Mythwright story outliner" style={{ background: 'var(--bg-primary)' }}>
 
       {/* Toolbar */}
       <AnimatePresence initial={false}>

@@ -43,7 +43,7 @@ function ToolChip({ tool, dragging }: { tool: typeof TOOLS[0]; dragging: boolean
       {...attributes}
       title={tool.tip}
       className={clsx(
-        'flex items-center justify-center h-10 px-3 rounded-[var(--radius-lg)] border cursor-grab',
+        'flex items-center justify-center h-10 px-3 rounded-[var(--radius-toolbox-chip)] border cursor-grab',
         'text-[12px] font-medium font-[family-name:var(--font-body)] text-[var(--text-primary)]',
         'transition-all duration-[var(--dur-fast)] select-none',
         dragging
@@ -254,7 +254,7 @@ export function ToolboxFramework({ outlineId }: { outlineId: string }) {
 
         <DragOverlay>
           {activeTool && (
-            <div className="px-4 h-10 rounded-[var(--radius-lg)] border border-[var(--accent-orange)] bg-[var(--accent-orange-20)] text-[12px] font-medium text-[var(--accent-orange)] flex items-center shadow-[var(--shadow-card-drag)]">
+            <div className="px-4 h-10 rounded-[var(--radius-toolbox-chip)] border border-[var(--accent-orange)] bg-[var(--accent-orange-20)] text-[12px] font-medium text-[var(--accent-orange)] flex items-center shadow-[var(--shadow-card-drag)]">
               {activeTool.label}
             </div>
           )}

@@ -148,6 +148,8 @@ export function NarrativeContextPanel() {
 
   return (
     <div
+      role="region"
+      aria-label="Story narrative anchors"
       className="flex flex-col h-full overflow-hidden"
       style={{ background: 'var(--bg-secondary)' }}
     >
