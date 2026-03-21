@@ -3,7 +3,7 @@ import { Camera, RotateCcw, X, ExternalLink, Plus } from 'lucide-react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBoundStore, useUI } from '../../store'
-import { type Beat, type BeatSnapshot, type Bookmark as BookmarkType } from '../../types'
+import { type Beat, type BeatSnapshot, type Bookmark as BookmarkType, type NarrativeAnchor } from '../../types'
 import { NotesEditor } from './NotesEditor'
 import { Badge } from '../shared/Badge'
 
@@ -289,7 +289,8 @@ function CommentsPanel({ beat }: { beat: Beat }) {
 // ── Beat detail view ─────────────────────────────────────────────
 function BeatDetail({ beat }: { beat: Beat }) {
   const updateBeat = useBoundStore(s => s.updateBeat)
-  const [activeTab, setActiveTab] = useState<Tab>('notes')
+  const { activeInspectorTab: activeTab } = useBoundStore(s => ({ activeInspectorTab: s.activeInspectorTab }))
+  const setActiveTab = useBoundStore(s => s.setActiveInspectorTab)
 
   const TAB_DEF: { id: Tab; label: string }[] = [
     { id:'notes',    label:'Notes'     },
@@ -345,7 +346,10 @@ function BeatDetail({ beat }: { beat: Beat }) {
               <NotesEditor
                 content={beat.bodyJson}
                 onChange={json => updateBeat(beat.id, { bodyJson: json })}
-                placeholder="Write your beat notes here…"
+                placeholder="Write your beat notes here… use #dramatic, #logline, or #theme to link to your story anchors."
+                onTagClick={(anchor: NarrativeAnchor) => {
+                  useBoundStore.getState().openNarrativeAnchor(anchor)
+                }}
               />
             )}
             {activeTab === 'metadata'  && <MetadataPanel beat={beat} />}

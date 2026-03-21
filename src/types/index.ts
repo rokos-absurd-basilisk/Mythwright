@@ -92,6 +92,11 @@ export interface Outline {
   vonnegutCurvePoints: VonnegutPoint[] | null
   vonnegutFormulaSegments: VonnegutSegment[] | null
   bookerArchetype: BookerArchetype | null
+  // ── Narrative Anchors ─────────────────────────────────────────
+  // Rich-text (TipTap JSON). null = not yet written.
+  dramaticQuestion: TipTapJSON | null
+  logline:          TipTapJSON | null
+  themeStated:      TipTapJSON | null
   createdAt: ISO8601
   updatedAt: ISO8601
 }
@@ -186,7 +191,14 @@ export interface UIState {
   splitBottomOutlineId: UUID | null
   selectedBeatId: UUID | null
   expandedStoryIds: UUID[]          // ← binder chevron state
+  activeInspectorTab: 'notes' | 'metadata' | 'snapshots' | 'bookmarks' | 'comments'
+  pendingTagHighlight: string | null // e.g. '#Dramatic' → scroll TipTap to tag
+  // ── Narrative Panel (left column bi-modal) ───────────────────
+  leftPanelMode:        'binder' | 'narrative'
+  narrativeActiveAnchor: 'dramaticQuestion' | 'logline' | 'themeStated'
 }
+
+export type NarrativeAnchor = 'dramaticQuestion' | 'logline' | 'themeStated'
 
 // ── Sync types ──────────────────────────────────────────────────
 export interface SyncQueueItem {

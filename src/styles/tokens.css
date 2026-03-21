@@ -81,3 +81,17 @@
 --canvas-dot-teal:    #5ec8c8;
 --canvas-label-white: #ffffff;
 --canvas-divider:     rgba(255,255,255,0.5);
+
+/* ── Story Compass (ambient North Star bar) ─────────────────── */
+--compass-question: #d4a96a;   /* warm amber — tension, the engine  */
+--compass-question-bg: rgba(212,169,106,0.08);
+--compass-logline: #5ec8c8;    /* teal — clarity, the map           */
+--compass-logline-bg: rgba(94,200,200,0.08);
+--compass-theme: #9d8fd4;      /* soft lavender — meaning, the soul */
+--compass-theme-bg: rgba(157,143,212,0.08);
+--compass-dot-glow: rgba(240,180,72,0.7);
+--compass-height: 36px;
+
+/* ── Narrative anchor extra tokens ─────────────────────────── */
+--accent-teal-20:  rgba(94, 200, 200, 0.20);
+--accent-orange-20: rgba(232, 147, 58, 0.20);

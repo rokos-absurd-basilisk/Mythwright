@@ -285,7 +285,6 @@ function SortableStoryItem({ story }: { story: Story }) {
 // ── Binder Root ─────────────────────────────────────────────────
 export function Binder() {
   const stories         = useStories()
-  const { binderOpen }  = useUI()
   const [showNewStory, setShowNewStory] = useState(false)
   const [activeId, setActiveId]         = useState<string | null>(null)
 
@@ -307,63 +306,49 @@ export function Binder() {
 
   return (
     <>
-      <aside className="flex flex-col border-r border-[var(--border)] flex-shrink-0"
-        style={{
-          width: binderOpen ? 'var(--binder-width)' : '0px',
-          background: 'var(--bg-secondary)',
-          overflow: 'hidden',
-          transition: 'width var(--dur-medium) var(--ease-in-out)',
-          boxShadow: binderOpen ? 'var(--shadow-panel)' : 'none',
-        }}>
-        <div style={{
-          width: 'var(--binder-width)', height:'100%',
-          opacity: binderOpen ? 1 : 0,
-          transition: 'opacity var(--dur-normal) var(--ease-in-out)',
-          display:'flex', flexDirection:'column', overflow:'hidden',
-        }}>
-          {/* Header */}
-          <div className="flex items-center justify-between px-3 h-10 border-b border-[var(--border-subtle)] flex-shrink-0">
-            <span className="text-[11px] uppercase tracking-widest font-[family-name:var(--font-heading)] font-semibold text-[var(--text-muted)]">Stories</span>
-            <button onClick={() => setShowNewStory(true)}
-              className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--accent-orange)] hover:bg-[var(--accent-orange-10)] transition-all"
-              title="New Story">
-              <BookPlus size={14} />
-            </button>
-          </div>
-
-          {/* Story list with dnd-kit sorting */}
-          <div className="flex-1 overflow-y-auto py-1">
-            {stories.length === 0 ? (
-              <div className="flex flex-col items-center gap-3 py-12 px-4 text-center">
-                <BookPlus size={32} className="text-[var(--text-muted)]" strokeWidth={1.5} />
-                <p className="text-xs text-[var(--text-muted)] leading-relaxed">Your shelf is empty.<br/>Create your first story.</p>
-                <button onClick={() => setShowNewStory(true)}
-                  className="text-xs text-[var(--accent-orange)] hover:text-[var(--accent-orange-dim)] transition-colors">
-                  + New Story
-                </button>
-              </div>
-            ) : (
-              <DndContext sensors={sensors} collisionDetection={closestCenter}
-                onDragStart={e => setActiveId(String(e.active.id))}
-                onDragEnd={handleStoryDragEnd}
-                onDragCancel={() => setActiveId(null)}>
-                <SortableContext items={stories.map(s => s.id)} strategy={verticalListSortingStrategy}>
-                  {stories.map(story => <SortableStoryItem key={story.id} story={story} />)}
-                </SortableContext>
-                <DragOverlay>
-                  {draggedStory ? (
-                    <div className="flex items-center h-9 px-3 gap-2 rounded border border-[var(--border-drag)] opacity-90 shadow-[var(--shadow-card-drag)]"
-                      style={{ background:'var(--bg-card)', width:'var(--binder-width)' }}>
-                      <span className="w-[3px] h-5 rounded-full" style={{ background: draggedStory.labelColour }} />
-                      <span className="text-[13px] font-medium text-[var(--text-primary)] truncate">{draggedStory.title}</span>
-                    </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            )}
-          </div>
+      <div className="flex flex-col h-full overflow-hidden" style={{ background: 'var(--bg-secondary)' }}>
+        {/* Header */}
+        <div className="flex items-center justify-between px-3 h-10 border-b border-[var(--border-subtle)] flex-shrink-0">
+          <span className="text-[11px] uppercase tracking-widest font-[family-name:var(--font-heading)] font-semibold text-[var(--text-muted)]">Stories</span>
+          <button onClick={() => setShowNewStory(true)}
+            className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--accent-orange)] hover:bg-[var(--accent-orange-10)] transition-all"
+            title="New Story">
+            <BookPlus size={14} />
+          </button>
         </div>
-      </aside>
+
+        {/* Story list with dnd-kit sorting */}
+        <div className="flex-1 overflow-y-auto py-1">
+          {stories.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 py-12 px-4 text-center">
+              <BookPlus size={32} className="text-[var(--text-muted)]" strokeWidth={1.5} />
+              <p className="text-xs text-[var(--text-muted)] leading-relaxed">Your shelf is empty.<br/>Create your first story.</p>
+              <button onClick={() => setShowNewStory(true)}
+                className="text-xs text-[var(--accent-orange)] hover:text-[var(--accent-orange-dim)] transition-colors">
+                + New Story
+              </button>
+            </div>
+          ) : (
+            <DndContext sensors={sensors} collisionDetection={closestCenter}
+              onDragStart={e => setActiveId(String(e.active.id))}
+              onDragEnd={handleStoryDragEnd}
+              onDragCancel={() => setActiveId(null)}>
+              <SortableContext items={stories.map(s => s.id)} strategy={verticalListSortingStrategy}>
+                {stories.map(story => <SortableStoryItem key={story.id} story={story} />)}
+              </SortableContext>
+              <DragOverlay>
+                {draggedStory ? (
+                  <div className="flex items-center h-9 px-3 gap-2 rounded border border-[var(--border-drag)] opacity-90 shadow-[var(--shadow-card-drag)]"
+                    style={{ background:'var(--bg-card)', width:'var(--binder-width)' }}>
+                    <span className="w-[3px] h-5 rounded-full" style={{ background: draggedStory.labelColour }} />
+                    <span className="text-[13px] font-medium text-[var(--text-primary)] truncate">{draggedStory.title}</span>
+                  </div>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+          )}
+        </div>
+      </div>
 
       <NewStoryModal open={showNewStory} onClose={() => setShowNewStory(false)} />
     </>

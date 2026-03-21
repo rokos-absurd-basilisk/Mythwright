@@ -1,21 +1,22 @@
 import { BookOpen, GitBranch } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBoundStore, useUI } from '../../store'
-import { BookerFramework }    from '../frameworks/BookerFramework'
-import { VonnegutFramework }  from '../frameworks/VonnegutFramework'
-import { ThreeActFramework }  from '../frameworks/ThreeActFramework'
-import { FiveActFramework }   from '../frameworks/FiveActFramework'
-import { SevenPointFramework }from '../frameworks/SevenPointFramework'
-import { SaveTheCatFramework }from '../frameworks/SaveTheCatFramework'
-import { ToolboxFramework }   from '../frameworks/ToolboxFramework'
-import { CorkboardView }      from '../corkboard/CorkboardView'
-import { MindmapView }        from '../mindmap/MindmapView'
-import { OutlinerView }       from '../outliner/OutlinerView'
+import { BookerFramework }     from '../frameworks/BookerFramework'
+import { VonnegutFramework }   from '../frameworks/VonnegutFramework'
+import { ThreeActFramework }   from '../frameworks/ThreeActFramework'
+import { FiveActFramework }    from '../frameworks/FiveActFramework'
+import { SevenPointFramework } from '../frameworks/SevenPointFramework'
+import { SaveTheCatFramework } from '../frameworks/SaveTheCatFramework'
+import { ToolboxFramework }    from '../frameworks/ToolboxFramework'
+import { CorkboardView }       from '../corkboard/CorkboardView'
+import { MindmapView }         from '../mindmap/MindmapView'
+import { OutlinerView }        from '../outliner/OutlinerView'
 
 const FRAMEWORK_NAMES: Record<number, string> = {
-  1:"Booker's 7 Types", 2:"Vonnegut's Story Shapes",
-  3:"3-Act Structure",  4:"5-Act / Freytag's Pyramid",
-  5:"7-Point Plot",     6:"Save the Cat", 7:"The Toolbox",
+  1:"Booker's 7 Types",      2:"Vonnegut's Story Shapes",
+  3:"3-Act Structure",       4:"5-Act / Freytag's Pyramid",
+  5:"7-Point Plot",          6:"Save the Cat",
+  7:"The Toolbox",
 }
 const EASE = [0, 0, 0.2, 1] as const
 
@@ -26,10 +27,12 @@ export function CanvasContainer() {
   if (!activeOutlineId || !outline) {
     return (
       <main className="flex-1 flex flex-col items-center justify-center gap-4"
-        style={{ background: 'var(--bg-primary)' }}>
-        <motion.div initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }}
+        style={{ background:'var(--bg-primary)' }}>
+        <motion.div
+          initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }}
           transition={{ duration:0.2, ease:EASE }}
-          className="flex flex-col items-center gap-4 text-center">
+          className="flex flex-col items-center gap-4 text-center"
+        >
           <BookOpen size={48} className="text-[var(--text-muted)]" strokeWidth={1.5} />
           <div>
             <h2 className="font-[family-name:var(--font-heading)] text-xl font-semibold tracking-wide text-[var(--text-secondary)] uppercase mb-1">
@@ -50,7 +53,6 @@ export function CanvasContainer() {
     if (activeViewMode === 'corkboard') return <CorkboardView outlineId={id} />
     if (activeViewMode === 'mindmap')   return <MindmapView   outlineId={id} />
     if (activeViewMode === 'outliner')  return <OutlinerView  outlineId={id} />
-    // Framework view
     switch (outline.frameworkId) {
       case 1: return <BookerFramework     outlineId={id} />
       case 2: return <VonnegutFramework   outlineId={id} />
@@ -64,15 +66,19 @@ export function CanvasContainer() {
   }
 
   return (
-    <main className="flex-1 flex flex-col overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
-      {/* Framework strip */}
-      <div className="flex items-center gap-2 px-5 py-2 border-b border-[var(--border-subtle)] flex-shrink-0"
-        style={{ background: 'var(--bg-secondary)' }}>
-        <GitBranch size={13} className="text-[var(--accent-orange)]" />
-        <span className="text-[11px] uppercase tracking-widest font-[family-name:var(--font-heading)] font-semibold text-[var(--accent-orange)]">
+    <main className="flex-1 flex flex-col overflow-hidden" style={{ background:'var(--bg-primary)' }}>
+      {/* Framework identity strip */}
+      <div
+        className="flex items-center gap-2 px-4 flex-shrink-0 border-b border-[var(--border-subtle)]"
+        style={{ height:'34px', background:'var(--bg-secondary)' }}
+      >
+        <GitBranch size={12} className="text-[var(--accent-orange)] flex-shrink-0" />
+        <span className="text-[10px] uppercase tracking-widest font-[family-name:var(--font-heading)] font-semibold text-[var(--accent-orange)] flex-shrink-0">
           {FRAMEWORK_NAMES[outline.frameworkId]}
         </span>
-        <span className="text-[11px] text-[var(--text-muted)]">— {outline.title}</span>
+        <span className="text-[10px] text-[var(--text-muted)] truncate min-w-0">
+          — {outline.title}
+        </span>
       </div>
 
       <AnimatePresence mode="wait" initial={false}>
@@ -81,7 +87,8 @@ export function CanvasContainer() {
           className="flex-1 flex flex-col overflow-hidden"
           initial={{ opacity:0, y:6 }} animate={{ opacity:1, y:0 }}
           exit={{ opacity:0, y:-4 }}
-          transition={{ duration:0.18, ease:EASE }}>
+          transition={{ duration:0.18, ease:EASE }}
+        >
           {renderView()}
         </motion.div>
       </AnimatePresence>

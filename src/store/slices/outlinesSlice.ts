@@ -35,6 +35,9 @@ export const createOutlinesSlice: StateCreator<OutlinesSlice> = (set, get) => ({
       vonnegutCurvePoints: null,
       vonnegutFormulaSegments: null,
       bookerArchetype: null,
+      dramaticQuestion: null,
+      logline: null,
+      themeStated: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
