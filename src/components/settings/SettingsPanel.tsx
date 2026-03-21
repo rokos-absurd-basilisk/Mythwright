@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, RefreshCw, LogOut, Trash2, HelpCircle, Moon, Sun, Feather } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useBoundStore } from '../../store'
+import { useToast } from '../shared/Toast'
 import { useSupabaseAuth } from '../../hooks/useSupabaseAuth'
 import { isSupabaseAvailable } from '../../lib/supabaseClient'
 
@@ -46,6 +47,7 @@ interface SettingsPanelProps { open: boolean; onClose: () => void }
 
 export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const { user, signOut } = useSupabaseAuth()
+  const { success } = useToast()
   const syncStatus  = useBoundStore(s => s.syncStatus)
   const lastSyncAt  = useBoundStore(s => s.lastSyncAt)
   const resetTutorial  = useBoundStore(s => s.resetTutorial)
@@ -54,6 +56,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
 
   const handleSignOut = async () => {
     await signOut()
+    success('Signed out successfully')
     onClose()
   }
 

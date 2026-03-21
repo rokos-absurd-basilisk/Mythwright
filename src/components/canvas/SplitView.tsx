@@ -15,6 +15,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { useBoundStore, useBeats, useUI } from '../../store'
 import { useToast } from '../shared/Toast'
+
 import { type Beat, type UUID } from '../../types'
 import { CanvasContainer } from './CanvasContainer'
 
@@ -271,7 +272,8 @@ export function SplitView({ totalHeight }: { totalHeight: number }) {
     const targetOutlineId = targetPanel === 'top' ? splitTopOutlineId : splitBottomOutlineId
     if (!targetOutlineId) return
 
-    copyBeat(beat.id, targetOutlineId)
+    const copied = copyBeat(beat.id, targetOutlineId)
+    void copied
     toastSuccess(`"${beat.title}" copied to ${targetPanel} panel`)
   }
 

@@ -23,6 +23,7 @@ interface TutorialProps {
   steps: TutorialStep[]
   onComplete: () => void
   onSkip:     () => void
+  onStepChange?: (stepId: string, skipped: boolean) => void
 }
 
 const EASE = [0, 0, 0.2, 1] as const
@@ -327,7 +328,7 @@ function WorkflowModal({
 }
 
 // ── Main TutorialSystem ──────────────────────────────────────
-export function TutorialSystem({ steps, onComplete, onSkip }: TutorialProps) {
+export function TutorialSystem({ steps, onComplete, onSkip, onStepChange }: TutorialProps) {
   const [stepIdx, setStepIdx]       = useState(0)
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
   const [modalRect,  setModalRect]  = useState<DOMRect | null>(null)
@@ -354,7 +355,11 @@ export function TutorialSystem({ steps, onComplete, onSkip }: TutorialProps) {
     return () => window.removeEventListener('resize', handleResize)
   }, [step])
 
-  const next = () => stepIdx < steps.length - 1 ? setStepIdx(i => i+1) : onComplete()
+  const next = () => {
+    if (onStepChange) onStepChange(step.id, false)
+    if (stepIdx < steps.length - 1) setStepIdx(i => i+1)
+    else onComplete()
+  }
   const prev = () => stepIdx > 0 && setStepIdx(i => i-1)
 
   return (

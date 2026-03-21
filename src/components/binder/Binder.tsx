@@ -12,6 +12,7 @@ import { BookPlus, ChevronRight, FilePlus, FileText, GitBranch, Plus, GripVertic
 import { clsx } from 'clsx'
 import { useBoundStore, useStories, useNotes, useOutlines, useUI } from '../../store'
 import { useToast } from '../shared/Toast'
+
 import { type Story, type Outline, type FrameworkId } from '../../types'
 import { Badge }  from '../shared/Badge'
 import { Modal }  from '../shared/Modal'
@@ -40,8 +41,8 @@ function NewStoryModal({ open, onClose }: { open: boolean; onClose: () => void }
   const addStory            = useBoundStore(s => s.addStory)
   const setActiveStory      = useBoundStore(s => s.setActiveStory)
   const toggleExpanded      = useBoundStore(s => s.toggleStoryExpanded)
+  const { success }         = useToast()
 
-  const { success } = useToast()
   const submit = () => {
     if (!title.trim()) return
     const s = addStory(title.trim(), colour)
@@ -89,8 +90,8 @@ function NewOutlineModal({ storyId, open, onClose }: { storyId: string; open: bo
   const [frameworkId, setFw]      = useState<FrameworkId>(3)
   const addOutline                = useBoundStore(s => s.addOutline)
   const setActiveOutline          = useBoundStore(s => s.setActiveOutline)
+  const { success }               = useToast()
 
-  const { success } = useToast()
   const submit = () => {
     if (!title.trim()) return
     const o = addOutline(storyId, title.trim(), frameworkId)

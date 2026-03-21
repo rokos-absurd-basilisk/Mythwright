@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useBoundStore, useUI } from '../../store'
 import { Toolbar }               from './Toolbar'
 import { LeftColumn }            from '../narrative/LeftColumn'
@@ -15,6 +15,7 @@ const EASE_IN_OUT = [0.4, 0, 0.2, 1] as const
 
 export function AppShell() {
   const { focusMode, splitMode } = useUI()
+  const shouldReduce  = useReducedMotion()
   const setFocusMode  = useBoundStore(s => s.setFocusMode)
   const setSplitMode  = useBoundStore(s => s.setSplitMode)
   const [searchOpen,   setSearchOpen]   = useState(false)
@@ -60,7 +61,7 @@ export function AppShell() {
           <motion.div key="toolbar"
             initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:48 }}
             exit={{ opacity:0, height:0 }}
-            transition={{ duration:0.2, ease:EASE_IN_OUT }}
+            transition={{ duration: shouldReduce ? 0 : 0.2, ease:EASE_IN_OUT }}
             className="overflow-hidden flex-shrink-0">
             <Toolbar
               onSearchOpen={() => setSearchOpen(true)}

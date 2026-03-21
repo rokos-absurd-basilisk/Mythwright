@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
   ReactFlow, addEdge, MiniMap, Controls, Background, BackgroundVariant,
   useNodesState, useEdgesState, type Node, type Edge, type Connection, type NodeTypes,
@@ -81,19 +81,27 @@ export function MindmapView({ outlineId }: { outlineId: string }) {
     if (newNodes.length) setNodes(ns => [...ns, ...newNodes])
   }, [beats])
 
-  // Persist on change
+  // Debounce-persist node positions without causing re-render loop
+  const persistTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const handleNodesChange = useCallback((changes: Parameters<typeof onNodesChange>[0]) => {
     onNodesChange(changes)
-    // Debounce save
-    setTimeout(() => {
-      setNodes(ns => {
-        setMindmapNodes(outlineId, ns.map(n => ({
-          id: n.id, x: n.position.x, y: n.position.y, data: n.data as Record<string,unknown>
-        })))
-        return ns
+    // Clear previous timer to debounce rapid drags
+    if (persistTimer.current) clearTimeout(persistTimer.current)
+    persistTimer.current = setTimeout(() => {
+      // Read directly from DOM state — don't call setNodes
+      const flowNodes = document.querySelectorAll('.react-flow__node')
+      const nodePositions: {id:string; x:number; y:number; data:Record<string,unknown>}[] = []
+      flowNodes.forEach(el => {
+        const transform = (el as HTMLElement).style.transform
+        const match = transform.match(/translate\((-?[\d.]+)px, (-?[\d.]+)px\)/)
+        if (match) {
+          const id = el.getAttribute('data-id') || ''
+          nodePositions.push({ id, x: parseFloat(match[1]), y: parseFloat(match[2]), data: {} })
+        }
       })
-    }, 300)
-  }, [onNodesChange, outlineId, setMindmapNodes, setNodes])
+      if (nodePositions.length) setMindmapNodes(outlineId, nodePositions)
+    }, 600)
+  }, [onNodesChange, outlineId, setMindmapNodes])
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -132,11 +140,18 @@ export function MindmapView({ outlineId }: { outlineId: string }) {
     toast('Beat added to mindmap')
   }, [outlineId, addBeat, setNodes, toast])
 
+  const onNodeDragStop = useCallback((_: React.MouseEvent, node: Node) => {
+    setMindmapNodes(outlineId, nodes.map(n => ({
+      id: n.id, x: n.position.x, y: n.position.y, data: n.data as Record<string,unknown>
+    })).map(n => n.id === node.id ? { ...n, x: node.position.x, y: node.position.y } : n))
+  }, [nodes, outlineId, setMindmapNodes])
+
   return (
     <div className="flex-1 overflow-hidden relative" style={{ background: 'var(--bg-primary)' }}>
       <ReactFlow
         nodes={nodes} edges={edges}
         onNodesChange={handleNodesChange}
+        onNodeDragStop={onNodeDragStop}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick}
