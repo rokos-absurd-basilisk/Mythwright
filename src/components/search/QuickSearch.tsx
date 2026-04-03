@@ -77,14 +77,7 @@ export function QuickSearch({ open, onClose }: QuickSearchProps) {
   }, [open])
 
   // Keyboard nav
-  const handleKey = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape')   { onClose(); return }
-    if (e.key === 'ArrowDown') { e.preventDefault(); setCursor(c => Math.min(c + 1, results.length - 1)) }
-    if (e.key === 'ArrowUp')   { e.preventDefault(); setCursor(c => Math.max(c - 1, 0)) }
-    if (e.key === 'Enter' && results[cursor]) navigate(results[cursor])
-  }, [results, cursor, onClose])
-
-  const navigate = (r: SearchResult) => {
+  const navigate = useCallback((r: SearchResult) => {
     if (r.type === 'story') {
       setActiveStory(r.id)
       toggleExpanded(r.id)
@@ -98,7 +91,14 @@ export function QuickSearch({ open, onClose }: QuickSearchProps) {
       setInspectorOpen(true)
     }
     onClose()
-  }
+  }, [setActiveStory, toggleExpanded, setActiveOutline, setSelectedBeat, setInspectorOpen, onClose])
+
+  const handleKey = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape')   { onClose(); return }
+    if (e.key === 'ArrowDown') { e.preventDefault(); setCursor(c => Math.min(c + 1, results.length - 1)) }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); setCursor(c => Math.max(c - 1, 0)) }
+    if (e.key === 'Enter' && results[cursor]) navigate(results[cursor])
+  }, [results, cursor, onClose, navigate])
 
   // Group results by type preserving order
   const grouped = GROUP_ORDER

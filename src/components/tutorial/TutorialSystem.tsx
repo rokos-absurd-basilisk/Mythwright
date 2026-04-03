@@ -334,10 +334,11 @@ export function TutorialSystem({ steps, onComplete, onSkip, onStepChange }: Tuto
   const [modalRect,  setModalRect]  = useState<DOMRect | null>(null)
 
   const step = steps[stepIdx]
-  if (!step) return null
 
   // Measure target element
+  // NOTE: guard inside effect, not above it (hooks must be called unconditionally)
   useEffect(() => {
+    if (!step) return
     if (step.mode === 'spotlight' && step.target) {
       const el = document.querySelector(step.target)
       if (el) setTargetRect(el.getBoundingClientRect())
@@ -361,6 +362,8 @@ export function TutorialSystem({ steps, onComplete, onSkip, onStepChange }: Tuto
     else onComplete()
   }
   const prev = () => stepIdx > 0 && setStepIdx(i => i-1)
+
+  if (!step) return null
 
   return (
     <AnimatePresence mode="wait">

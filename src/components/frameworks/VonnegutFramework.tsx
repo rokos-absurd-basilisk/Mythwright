@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useMemo } from 'react'
 import { clsx } from 'clsx'
 import { useBoundStore } from '../../store'
 import { useBeats } from '../../store'
@@ -98,11 +98,11 @@ function FreehandCanvas({ outlineId }: { outlineId: string }) {
   const beats    = useBeats(outlineId)
 
   // Bezier control points stored in outline.vonnegutCurvePoints as [{id,x,y}] x4
-  const stored  = outline?.vonnegutCurvePoints
-  const p0 = stored?.[0] ? { x: stored[0].x, y: stored[0].y } : DEFAULT_BEZIER.p0
-  const p1 = stored?.[1] ? { x: stored[1].x, y: stored[1].y } : DEFAULT_BEZIER.p1
-  const p2 = stored?.[2] ? { x: stored[2].x, y: stored[2].y } : DEFAULT_BEZIER.p2
-  const p3 = stored?.[3] ? { x: stored[3].x, y: stored[3].y } : DEFAULT_BEZIER.p3
+  const stored = outline?.vonnegutCurvePoints
+  const p0 = useMemo(() => stored?.[0] ? { x: stored[0].x, y: stored[0].y } : DEFAULT_BEZIER.p0, [stored])
+  const p1 = useMemo(() => stored?.[1] ? { x: stored[1].x, y: stored[1].y } : DEFAULT_BEZIER.p1, [stored])
+  const p2 = useMemo(() => stored?.[2] ? { x: stored[2].x, y: stored[2].y } : DEFAULT_BEZIER.p2, [stored])
+  const p3 = useMemo(() => stored?.[3] ? { x: stored[3].x, y: stored[3].y } : DEFAULT_BEZIER.p3, [stored])
 
   const [drag, setDrag] = useState<null | 'p1' | 'p2'>(null)
   const svgRef = useRef<SVGSVGElement>(null)

@@ -43,6 +43,8 @@ const mockBeat: Beat = {
     content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Scene opens.' }] }],
   },
   keywords: [], customMetadata: [], snapshots: [], bookmarks: [], comments: [],
+  isMicroBeat: false, xPosition: 0, yPosition: 0,
+  toolType: null, isLockedAnchor: false,
   createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z',
 }
 

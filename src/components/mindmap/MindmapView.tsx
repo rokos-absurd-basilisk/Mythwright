@@ -68,7 +68,8 @@ export function MindmapView({ outlineId }: { outlineId: string }) {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
 
-  // Sync new beats into nodes
+  // Sync new beats into nodes (runs when beat count changes)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const existingIds = new Set(nodes.map(n => n.id))
     const newNodes = beats
@@ -79,7 +80,7 @@ export function MindmapView({ outlineId }: { outlineId: string }) {
         data: { label: b.title || 'Untitled', labelColour: b.labelColour, synopsis: b.synopsis },
       }))
     if (newNodes.length) setNodes(ns => [...ns, ...newNodes])
-  }, [beats])
+  }, [beats.length])
 
   // Debounce-persist node positions without causing re-render loop
   const persistTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null)

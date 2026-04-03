@@ -59,8 +59,9 @@ export function OnboardingTutorial() {
   const markStep          = useBoundStore(s => s.markTutorialStep)
   const dismissTutorial   = useBoundStore(s => s.dismissTutorial)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    // Show if not dismissed and not all steps done
+    // Intentional: only run on mount. tutorialDismissed/Progress are refs inside effect.
     if (tutorialDismissed) return
     const allDone = ONBOARDING_STEPS.every(s => tutorialProgress.some(p => p.stepId === s.id))
     if (allDone) return
@@ -97,7 +98,7 @@ export function OnboardingTutorial() {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function resetOnboarding() {
-  // Called from Settings — resets Zustand state (will be synced to Supabase)
   useBoundStore.getState().resetTutorial()
 }

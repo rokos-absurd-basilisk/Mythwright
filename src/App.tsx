@@ -6,11 +6,18 @@ import { LoginPage }         from './components/auth/LoginPage'
 import { ToastProvider }     from './components/shared/Toast'
 import { useSupabaseAuth }   from './hooks/useSupabaseAuth'
 import { useSync }           from './hooks/useSync'
+import { useTutorialSync }   from './hooks/useTutorialSync'
+import { useMindmapSync }    from './hooks/useMindmapSync'
 import { isSupabaseAvailable } from './lib/supabaseClient'
 
 const EASE = [0, 0, 0.2, 1] as const
 
-function SyncRunner() { useSync(); return null }
+function SyncRunner() {
+  useSync()
+  useTutorialSync()
+  useMindmapSync()
+  return null
+}
 
 function AppRoutes() {
   const { user, loading } = useSupabaseAuth()

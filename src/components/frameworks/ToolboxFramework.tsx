@@ -58,7 +58,7 @@ function ToolChip({ tool, dragging }: { tool: typeof TOOLS[0]; dragging: boolean
 }
 
 // ── Timeline drop zone ──────────────────────────────────────────
-function TimelineDropZone({ }: { onDrop?: (toolType: ToolboxTool, xPos: number) => void }) {
+function TimelineDropZone(_props: { onDrop?: (toolType: ToolboxTool, xPos: number) => void }) {
   const { setNodeRef, isOver } = useDroppable({ id: 'timeline', data: { type: 'timeline' } })
   return (
     <div

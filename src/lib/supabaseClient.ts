@@ -24,3 +24,4 @@ export const isSupabaseAvailable = () => supabase !== null
 export type DbTable =
   | 'stories' | 'notes' | 'outlines' | 'beats'
   | 'mindmap_nodes' | 'mindmap_edges' | 'collections'
+  | 'tutorial_progress'
