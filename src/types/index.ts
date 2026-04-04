@@ -196,6 +196,7 @@ export interface UIState {
   // ── Narrative Panel (left column bi-modal) ───────────────────
   leftPanelMode:        'binder' | 'narrative'
   narrativeActiveAnchor: 'dramaticQuestion' | 'logline' | 'themeStated'
+  pendingTutorialStep:  string | null
 }
 
 export type NarrativeAnchor = 'dramaticQuestion' | 'logline' | 'themeStated'

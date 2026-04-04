@@ -94,4 +94,5 @@ export const useUI = () =>
     pendingTagHighlight:    s.pendingTagHighlight,
     leftPanelMode:          s.leftPanelMode,
     narrativeActiveAnchor:  s.narrativeActiveAnchor,
+    pendingTutorialStep:    s.pendingTutorialStep,
   })))

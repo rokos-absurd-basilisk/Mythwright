@@ -9,6 +9,7 @@ import { clsx } from 'clsx'
 import { useBoundStore, useUI } from '../../store'
 import { type ViewMode } from '../../types'
 import { Tooltip }     from '../shared/Tooltip'
+import { HelpButton }  from '../shared/HelpButton'
 import { ExportModal } from '../export/ExportModal'
 
 const VIEW_TABS: { id: ViewMode; label: string; Icon: React.FC<{ size?: number }> }[] = [
@@ -147,6 +148,8 @@ export function Toolbar({ onSearchOpen, onSettingsOpen }: ToolbarProps) {
               <Settings size={18}/>
             </button>
           </Tooltip>
+
+          <HelpButton stepId="onboard-05" title="Help: Inspector panel" size={16}/>
 
           <Tooltip content={inspectorOpen ? 'Hide Inspector' : 'Show Inspector'} placement="bottom">
             <button onClick={toggleInspector}

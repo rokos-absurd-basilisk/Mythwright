@@ -22,6 +22,8 @@ export interface UISlice extends UIState {
   // ── Narrative Panel ─────────────────────────────────────────
   openNarrativeAnchor:    (anchor: NarrativeAnchor) => void
   closeNarrativePanel:    () => void
+  openTutorialAtStep:     (stepId: string) => void
+  pendingTutorialStep:    string | null
 }
 
 export const createUISlice: StateCreator<UISlice> = (set) => ({
@@ -41,6 +43,7 @@ export const createUISlice: StateCreator<UISlice> = (set) => ({
   pendingTagHighlight:    null,
   leftPanelMode:          'binder',
   narrativeActiveAnchor:  'dramaticQuestion',
+  pendingTutorialStep:    null,
 
   // ── Actions ──────────────────────────────────────────────────
   setBinderOpen:          (open)    => set({ binderOpen: open }),
@@ -67,6 +70,8 @@ export const createUISlice: StateCreator<UISlice> = (set) => ({
   }),
 
   closeNarrativePanel: () => set({ leftPanelMode: 'binder' }),
+
+  openTutorialAtStep: (stepId) => set({ pendingTutorialStep: stepId }),
 
   jumpToCompassTag: (tag, beatId) => set({
     selectedBeatId:      beatId,

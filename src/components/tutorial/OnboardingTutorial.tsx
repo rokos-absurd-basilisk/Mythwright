@@ -54,7 +54,17 @@ const ONBOARDING_STEPS: TutorialStep[] = [
 
 export function OnboardingTutorial() {
   const [show, setShow] = useState(false)
-  const tutorialDismissed = useBoundStore(s => s.tutorialDismissed)
+  const tutorialDismissed  = useBoundStore(s => s.tutorialDismissed)
+  const pendingStep        = useBoundStore(s => s.pendingTutorialStep)
+  const clearPendingStep   = useBoundStore(s => s.openTutorialAtStep)
+
+  // Open tutorial at a specific step when triggered by a ? button
+  useEffect(() => {
+    if (pendingStep && pendingStep.length > 0) {
+      setShow(true)
+      clearPendingStep('') // clear the pending step
+    }
+  }, [pendingStep, clearPendingStep])
   const tutorialProgress  = useBoundStore(s => s.tutorialProgress)
   const markStep          = useBoundStore(s => s.markTutorialStep)
   const dismissTutorial   = useBoundStore(s => s.dismissTutorial)

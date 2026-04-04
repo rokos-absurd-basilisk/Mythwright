@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, RefreshCw, LogOut, Trash2, HelpCircle, Moon, Sun, Feather } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useBoundStore } from '../../store'
+import { KeyboardShortcuts } from './KeyboardShortcuts'
 import { useToast } from '../shared/Toast'
 import { useSupabaseAuth } from '../../hooks/useSupabaseAuth'
 import { isSupabaseAvailable } from '../../lib/supabaseClient'
@@ -186,6 +187,13 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                     {replayDone ? <><RefreshCw size={11}/>Reloading…</> : <><HelpCircle size={11}/>Replay Tour</>}
                   </button>
                 </SettingRow>
+              </Section>
+
+              {/* Keyboard shortcuts */}
+              <Section title="Keyboard Shortcuts">
+                <div className="px-0">
+                  <KeyboardShortcuts />
+                </div>
               </Section>
 
               {/* Danger zone */}

@@ -8,6 +8,7 @@ import { CanvasContainer }       from '../canvas/CanvasContainer'
 import { SplitView }             from '../canvas/SplitView'
 import { InspectorPanel }        from '../inspector/InspectorPanel'
 import { QuickSearch }           from '../search/QuickSearch'
+import { useToast }              from '../shared/Toast'
 import { OnboardingTutorial }    from '../tutorial/OnboardingTutorial'
 import { SettingsPanel }         from '../settings/SettingsPanel'
 
@@ -15,11 +16,22 @@ const EASE_IN_OUT = [0.4, 0, 0.2, 1] as const
 
 export function AppShell() {
   const { focusMode, splitMode } = useUI()
+  const syncStatus = useBoundStore(s => s.syncStatus)
   const shouldReduce  = useReducedMotion()
   const setFocusMode  = useBoundStore(s => s.setFocusMode)
   const setSplitMode  = useBoundStore(s => s.setSplitMode)
   const [searchOpen,   setSearchOpen]   = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const { warn: toastWarn } = useToast()
+  const prevSyncRef = useRef<string>('')
+
+  // Surface sync errors as toasts
+  useEffect(() => {
+    if (syncStatus === 'conflict' && prevSyncRef.current !== 'conflict') {
+      toastWarn('Sync conflict detected — last-write-wins applied', 6000)
+    }
+    prevSyncRef.current = syncStatus
+  }, [syncStatus, toastWarn])
   const centreRef = useRef<HTMLDivElement>(null)
   const [centreHeight, setCentreHeight] = useState(600)
 
