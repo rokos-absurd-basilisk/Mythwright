@@ -6,6 +6,7 @@ import { useBoundStore, useUI } from '../../store'
 import { useToast } from '../shared/Toast'
 import { type Beat, type BeatSnapshot, type Bookmark as BookmarkType, type NarrativeAnchor } from '../../types'
 import { NotesEditor } from './NotesEditor'
+import { TagInput }    from '../shared/TagInput'
 import { Badge } from '../shared/Badge'
 
 // ── Tab definitions ─────────────────────────────────────────────
@@ -57,6 +58,17 @@ function MetadataPanel({ beat }: { beat: Beat }) {
 
       <div className="flex flex-col gap-1.5">
         <label className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-[family-name:var(--font-heading)] font-semibold">
+          Keywords
+        </label>
+        <TagInput
+          tags={beat.keywords}
+          onChange={tags => updateBeat(beat.id, { keywords: tags })}
+          placeholder="Add keyword, press Enter…"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-[family-name:var(--font-heading)] font-semibold">
           Status
         </label>
         <div className="flex gap-2 flex-wrap">
@@ -86,30 +98,7 @@ function MetadataPanel({ beat }: { beat: Beat }) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-[family-name:var(--font-heading)] font-semibold">
-          Keywords
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          {beat.keywords.map((kw, i) => (
-            <span key={i} className="flex items-center gap-1 px-2 h-5 rounded-[var(--radius-pill)] text-[10px] bg-[var(--bg-input)] border border-[var(--border)] text-[var(--text-secondary)]">
-              {kw}
-              <button onClick={() => updateBeat(beat.id, { keywords: beat.keywords.filter((_,j)=>j!==i) })}
-                className="text-[var(--text-muted)] hover:text-[var(--status-blocked)]"><X size={8}/></button>
-            </span>
-          ))}
-          <form onSubmit={e => {
-            e.preventDefault()
-            const inp = (e.currentTarget.elements[0] as HTMLInputElement)
-            if (inp.value.trim()) {
-              updateBeat(beat.id, { keywords: [...beat.keywords, inp.value.trim()] })
-              inp.value = ''
-            }
-          }}>
-            <input placeholder="+ tag" className="h-5 px-2 rounded-[var(--radius-pill)] text-[10px] border border-dashed border-[var(--border)] bg-transparent text-[var(--text-muted)] focus:border-[var(--border-active)] focus:text-[var(--text-primary)] outline-none w-16" />
-          </form>
-        </div>
-      </div>
+
     </div>
   )
 }

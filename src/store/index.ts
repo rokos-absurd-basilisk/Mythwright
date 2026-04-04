@@ -5,12 +5,13 @@ import { createStoriesSlice,  type StoriesSlice  } from './slices/storiesSlice'
 import { createOutlinesSlice, type OutlinesSlice } from './slices/outlinesSlice'
 import { createUISlice,       type UISlice       } from './slices/uiSlice'
 import { createSyncSlice,     type SyncSlice     } from './slices/syncSlice'
+import { createCollectionsSlice, type CollectionsSlice } from './slices/collectionsSlice'
 import { createTutorialSlice, type TutorialSlice } from './slices/tutorialSlice'
 import { createMindmapSlice,  type MindmapSlice  } from './slices/mindmapSlice'
 
 export type BoundStore =
   StoriesSlice & OutlinesSlice & UISlice & SyncSlice &
-  TutorialSlice & MindmapSlice
+  TutorialSlice & MindmapSlice & CollectionsSlice
 
 export const useBoundStore = create<BoundStore>()(
   devtools(
@@ -20,6 +21,7 @@ export const useBoundStore = create<BoundStore>()(
         ...createOutlinesSlice(...a),
         ...createUISlice(...a),
         ...createSyncSlice(...a),
+        ...createCollectionsSlice(...a),
         ...createTutorialSlice(...a),
         ...createMindmapSlice(...a),
       }),
@@ -46,6 +48,7 @@ export const useBoundStore = create<BoundStore>()(
           mindmapNodes:    s.mindmapNodes,
           mindmapEdges:    s.mindmapEdges,
           mindmapViewport: s.mindmapViewport,
+          collections:     s.collections,
         }),
       }
     ),

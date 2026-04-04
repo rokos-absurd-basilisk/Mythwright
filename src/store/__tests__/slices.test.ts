@@ -161,3 +161,48 @@ describe('mindmapSlice', () => {
     expect(s.getState().getMindmapNodes('outline-B')).toHaveLength(2)
   })
 })
+
+// ── Collections slice ─────────────────────────────────────────
+import { createCollectionsSlice, type CollectionsSlice } from '../slices/collectionsSlice'
+
+type ColStore = CollectionsSlice
+function makeColStore() {
+  return create<ColStore>()((...a) => ({ ...createCollectionsSlice(...a) }))
+}
+
+describe('collectionsSlice', () => {
+  it('starts with 3 default collections', () => {
+    const s = makeColStore()
+    expect(s.getState().collections.length).toBe(3)
+  })
+
+  it('addCollection creates and appends', () => {
+    const s = makeColStore()
+    const col = s.getState().addCollection('My Filter', { statuses: ['draft'] })
+    expect(col.name).toBe('My Filter')
+    expect(s.getState().collections.length).toBe(4)
+  })
+
+  it('deleteCollection removes by id', () => {
+    const s = makeColStore()
+    const col = s.getState().addCollection('Temp', {})
+    s.getState().deleteCollection(col.id)
+    expect(s.getState().collections.find(c => c.id === col.id)).toBeUndefined()
+  })
+
+  it('setActiveCollection toggles filter mode', () => {
+    const s = makeColStore()
+    expect(s.getState().activeCollectionId).toBeNull()
+    s.getState().setActiveCollection('col-final')
+    expect(s.getState().activeCollectionId).toBe('col-final')
+    s.getState().setActiveCollection(null)
+    expect(s.getState().activeCollectionId).toBeNull()
+  })
+
+  it('updateCollection mutates only the target', () => {
+    const s = makeColStore()
+    const col = s.getState().addCollection('A', {})
+    s.getState().updateCollection(col.id, { name: 'B' })
+    expect(s.getState().collections.find(c => c.id === col.id)?.name).toBe('B')
+  })
+})
