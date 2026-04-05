@@ -9,8 +9,7 @@ import { SevenPointFramework } from '../frameworks/SevenPointFramework'
 import { SaveTheCatFramework } from '../frameworks/SaveTheCatFramework'
 import { ToolboxFramework }    from '../frameworks/ToolboxFramework'
 import { CorkboardView }       from '../corkboard/CorkboardView'
-import { lazy, Suspense } from 'react'
-const MindmapView = lazy(() => import('../mindmap/MindmapView').then(m => ({ default: m.MindmapView })))
+import { MindmapView } from '../mindmap/MindmapView'
 import { OutlinerView }        from '../outliner/OutlinerView'
 
 const FRAMEWORK_NAMES: Record<number, string> = {
@@ -57,7 +56,7 @@ export function CanvasContainer({ forceOutlineId }: CanvasContainerProps) {
 
   const renderView = () => {
     if (activeViewMode === 'corkboard') return <CorkboardView outlineId={id} />
-    if (activeViewMode === 'mindmap')   return <Suspense fallback={<div className="flex-1 flex items-center justify-center text-[var(--text-muted)] text-sm">Loading mindmap…</div>}><MindmapView outlineId={id} /></Suspense>
+    if (activeViewMode === 'mindmap')   return <MindmapView outlineId={id} />
     if (activeViewMode === 'outliner')  return <OutlinerView  outlineId={id} />
     switch (outline.frameworkId) {
       case 1: return <BookerFramework     outlineId={id} />

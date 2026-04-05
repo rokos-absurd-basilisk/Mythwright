@@ -39,6 +39,7 @@ export function useSync() {
     }
 
     setSyncStatus('syncing')
+    // Collections synced via useCollectionsSync hook
 
     // Group by table+operation to batch upserts
     const upserts = new Map<DbTable, Record<string, unknown>[]>()

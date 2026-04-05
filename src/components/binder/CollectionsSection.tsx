@@ -134,14 +134,14 @@ export function CollectionsSection() {
 
   return (
     <div className="border-t border-[var(--border-subtle)] mt-1 pt-1 pb-2">
-      <button onClick={()=>setExpanded(e=>!e)}
-        className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-[var(--accent-teal-10)] rounded-[var(--radius-md)] transition-colors duration-[var(--dur-fast)] group">
+      <div onClick={()=>setExpanded(e=>!e)}
+        className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-[var(--accent-teal-10)] rounded-[var(--radius-md)] transition-colors duration-[var(--dur-fast)] cursor-pointer group">
         <Layers size={12} className="text-[var(--text-muted)] flex-shrink-0"/>
         <span className="text-[10px] uppercase tracking-widest font-[family-name:var(--font-heading)] font-semibold text-[var(--text-muted)] flex-1">Collections</span>
         <button onClick={e=>{e.stopPropagation();setOpen(true)}}
           className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[var(--text-muted)] hover:text-[var(--accent-orange)] transition-all"
           aria-label="New collection"><Plus size={11}/></button>
-      </button>
+      </div>
       <AnimatePresence initial={false}>
         {expanded && (
           <motion.div initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}}

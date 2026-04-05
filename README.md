@@ -2,48 +2,96 @@
 
 > *Forge your narrative.*
 
-A visual story outlining and plotting web application for novelists, screenwriters, and storytellers. Built with React 19 + Vite, Zustand, TipTap, dnd-kit, and React Flow.
+A visual story outlining and plotting web application for novelists, screenwriters, and storytellers. Built with React 19 + Vite 8, Zustand v5, TipTap, dnd-kit, and React Flow.
 
 ## Features
 
-- **7 plotting frameworks** — from Booker's archetypes to Save the Cat to a freeform Toolbox
-- **Vonnegut curve editor** — interactive Bézier freehand mode + mathematical Formula Mode with 10 curve types, sharp-shift detection
-- **Scrivener-inspired layout** — Binder | Canvas | Inspector three-panel UI
-- **4 view modes** — Framework, Corkboard, Mindmap (React Flow), Outliner
-- **Rich Inspector** — TipTap notes, synopsis, snapshots, bookmarks, comments
-- **Offline-first** — localStorage primary store, Supabase background sync
-- **Export** — JSON, Markdown, HTML, PNG
-- **Tutorial mode** — Coach marks with animated zigzag wire, workflow modals
+### Seven Plotting Frameworks
+- **Booker's 7 Archetypes** — card selector for story archetype
+- **Vonnegut Story Shapes** — interactive Bézier curve with Freehand + Formula Mode (10 mathematical curve types, sharp-shift detection)
+- **3-Act Structure** — ascending line with beat slots, teal Act II glow
+- **5-Act / Freytag's Pyramid** — mountain shape + pyramid toggle
+- **7-Point Plot** — winding snake path, reaction/proaction phase shading
+- **Save the Cat** — sinusoidal 15-beat path, midpoint False Victory/Defeat toggle
+- **The Toolbox** — drag-and-drop beat chips + CSV bulk import
+
+### Layout
+- **Scrivener-inspired 3-panel UI** — Binder | Canvas | Inspector
+- **Bi-modal Binder** — switches between story tree and Narrative Context Panel
+- **Narrative Compass** — Dramatic Question, Logline, Theme Stated as ambient strip + full editors; `#dramatic` `#logline` `#theme` tags in beat notes create clickable hyperlinks
+- **Focus Mode** (F11) — hides all chrome, canvas expands fullscreen
+- **Split Mode** (⌘\\) — two independent canvases with drag-to-copy beats between panels
+- **Quick Search** (⌘K) — fuzzy search across stories, outlines, beats
+
+### Views
+- **Framework** — the plotting diagram
+- **Corkboard** — index card grid with adjustable columns and Label Colour Threads (SVG splines connecting same-label cards)
+- **Mindmap** — React Flow node canvas with persisted positions
+- **Outliner** — spreadsheet table with inline editing
+
+### Inspector Panel
+- **TipTap rich text** notes with `#tag` hyperlinks to narrative anchors
+- **Synopsis** field with character limit
+- **Keywords** multi-chip tag input
+- **Snapshots** — take/restore/delete timestamped versions of beat notes
+- **Bookmarks** — internal links + external URLs
+- **Comments** — timestamped annotation thread
+
+### Binder
+- Drag-to-reorder stories and outlines
+- **Right-click context menu** on any story/outline: Rename (inline), Archive/Unarchive, Delete
+- **Collections** — virtual saved filters (by status, framework type) with toggle-to-filter
+- **ColorPicker** — 12 preset swatches + custom hex on story creation
+
+### Export (22 formats)
+- **In-browser:** JSON, Markdown, HTML, PNG
+- **Via Pandoc bridge** (`npm run pandoc-bridge`): docx, odt, rtf, epub, pdf, rst, asciidoc, org, latex, mediawiki, jira, dokuwiki, textile, fb2, man, plain, typst, pptx
+
+### Other
+- **Toast notifications** — feedback for all key actions
+- **Tutorial mode** — spotlight coach marks with animated zigzag wire + workflow modals with CSS simulations
+- **Keyboard shortcuts panel** in Settings
+- **Supabase auth** (optional) + localStorage-first offline sync
+- **GitHub Actions CI** — lint → test → build on every push
 
 ## Tech Stack
 
 | Layer | Choice |
 |-------|--------|
-| Framework | React 19 + Vite 8 |
-| State | Zustand v5 (slices + `useShallow`) |
-| Drag & Drop | dnd-kit |
+| Framework | React 19 + Vite 8 (Rolldown) |
+| State | Zustand v5 (6 slices + `useShallow`) |
+| Drag & Drop | dnd-kit v6 |
 | Mindmap | @xyflow/react (React Flow) |
-| Rich Text | TipTap (headless, ProseMirror) |
+| Rich Text | TipTap v3 (headless, ProseMirror) |
 | Styling | Tailwind CSS v4 |
 | Animations | CSS transitions + Framer Motion (targeted) |
-| Sync | localStorage-first + Supabase background sync |
-| Auth | Supabase Auth |
+| Auth & Sync | Supabase JS v2 (localStorage-first) |
 
 ## Getting Started
 
 ```bash
 npm install
-cp .env.example .env          # optional — Supabase sync
-npm run dev
+cp .env.example .env   # optional — Supabase sync
+npm run dev            # http://localhost:5173
 ```
 
-Open [http://localhost:5173](http://localhost:5173).
+Supabase is entirely optional. Without it the app runs fully offline.
 
 ## Self-hosting
 
 ```bash
 npm run build
-# Deploy dist/ to any static host: Nginx, Cloudflare Pages, Vercel, etc.
+# Deploy dist/ to any static host
+```
+
+**Nginx:**
+```nginx
+location / { try_files $uri $uri/ /index.html; }
+```
+
+**Pandoc exports** (optional):
+```bash
+npm run pandoc-bridge   # starts local bridge on :4567
 ```
 
 ## Environment Variables
@@ -53,24 +101,24 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-Both optional — the app works fully offline without Supabase.
+## Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `npm run dev` | Vite dev server |
+| `npm run build` | Production build → `dist/` |
+| `npm run test` | Vitest unit tests (51 tests) |
+| `npm run test:coverage` | Tests with v8 coverage report |
+| `npm run lint` | ESLint (0 errors) |
+| `npm run pandoc-bridge` | Local Pandoc conversion server |
 
 ## Branch Structure
 
 | Branch | Purpose |
 |--------|---------|
 | `main` | Stable releases |
-| `dev` | Active development |
-
-## Roadmap
-
-- [x] Part 1 — Scaffold, design tokens, Zustand stores, AppShell
-- [x] Part 2 — All 7 frameworks, Vonnegut Formula Mode, sharp-shift detection
-- [x] Part 3 — Inspector (TipTap, snapshots, bookmarks, comments), Corkboard, Mindmap, Outliner
-- [ ] Part 4 — Export system, Split Mode, dnd-kit Binder sorting
-- [ ] Part 5 — Supabase auth + sync, Tutorial mode
-- [ ] Part 6 — Polish, accessibility, performance
+| `dev`  | Active development |
 
 ## License
 
-MIT
+MIT — © Absurd Literary Softwares
