@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Camera, RotateCcw, X, ExternalLink, Plus } from 'lucide-react'
+import { Camera, RotateCcw, X, ExternalLink, Plus, ArrowRight } from 'lucide-react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBoundStore, useUI } from '../../store'
@@ -166,40 +166,112 @@ function SnapshotsPanel({ beat }: { beat: Beat }) {
 
 // ── Bookmarks panel ─────────────────────────────────────────────
 function BookmarksPanel({ beat }: { beat: Beat }) {
-  const updateBeat = useBoundStore(s => s.updateBeat)
-  const [url, setUrl] = useState('')
-  const [title, setTitle] = useState('')
+  const updateBeat      = useBoundStore(s => s.updateBeat)
+  const allBeats        = useBoundStore(s => s.beats)
+  const allOutlines     = useBoundStore(s => s.outlines)
+  const setSelectedBeat = useBoundStore(s => s.setSelectedBeat)
+  const setActiveOutline= useBoundStore(s => s.setActiveOutline)
+  const setActiveStory  = useBoundStore(s => s.setActiveStory)
 
-  const add = () => {
+  const [mode,  setMode]  = useState<'external'|'internal'>('external')
+  const [url,   setUrl]   = useState('')
+  const [title, setTitle] = useState('')
+  const [query, setQuery] = useState('')
+
+  // Internal search results
+  const internalResults = query.trim().length > 0 ? [
+    ...allBeats
+      .filter(b => b.id !== beat.id && b.title.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, 5)
+      .map(b => ({ id: b.id, type: 'beat' as const, label: b.title, sub: 'Beat' })),
+    ...allOutlines
+      .filter(o => o.title.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, 3)
+      .map(o => ({ id: o.id, type: 'outline' as const, label: o.title, sub: 'Outline' })),
+  ] : []
+
+  const addExternal = () => {
     if (!url.trim()) return
     const bm: BookmarkType = {
-      id: crypto.randomUUID(),
-      type: 'external',
-      title: title.trim() || url,
-      url: url.trim(),
+      id: crypto.randomUUID(), type: 'external',
+      title: title.trim() || url, url: url.trim(),
     }
     updateBeat(beat.id, { bookmarks: [...beat.bookmarks, bm] })
     setUrl(''); setTitle('')
   }
 
+  const addInternal = (r: { id: string; type: 'beat'|'outline'; label: string }) => {
+    const bm: BookmarkType = {
+      id: crypto.randomUUID(), type: 'internal',
+      title: r.label, targetType: r.type, targetId: r.id,
+    }
+    updateBeat(beat.id, { bookmarks: [...beat.bookmarks, bm] })
+    setQuery('')
+  }
+
+  const navigate = (bm: BookmarkType) => {
+    if (bm.type === 'external' && bm.url) { window.open(bm.url, '_blank', 'noopener,noreferrer'); return }
+    if (bm.targetType === 'beat' && bm.targetId) {
+      setSelectedBeat(bm.targetId)
+    } else if (bm.targetType === 'outline' && bm.targetId) {
+      const outline = allOutlines.find(o => o.id === bm.targetId)
+      if (outline) { setActiveStory(outline.storyId); setActiveOutline(bm.targetId) }
+    }
+  }
+
   return (
     <div className="flex flex-col gap-3 p-4">
-      <div className="flex flex-col gap-2 p-3 rounded-[var(--radius-md)] border border-[var(--border)]"
-        style={{ background: 'var(--bg-input)' }}>
-        <input value={title} onChange={e=>setTitle(e.target.value)}
-          placeholder="Title (optional)"
-          className="h-7 px-2 rounded-[var(--radius-sm)] border border-[var(--border)] text-[12px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--border-active)] outline-none bg-transparent" />
-        <div className="flex gap-2">
-          <input value={url} onChange={e=>setUrl(e.target.value)}
-            onKeyDown={e=>e.key==='Enter'&&add()}
-            placeholder="https://…"
-            className="flex-1 h-7 px-2 rounded-[var(--radius-sm)] border border-[var(--border)] text-[12px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--border-active)] outline-none bg-transparent" />
-          <button onClick={add}
-            className="px-3 h-7 rounded-[var(--radius-sm)] bg-[var(--accent-orange)] text-white text-[11px] font-medium hover:bg-[var(--accent-orange-dim)] transition-colors">
-            <Plus size={12}/>
+      {/* Type toggle */}
+      <div className="flex rounded-[var(--radius-md)] border border-[var(--border)] overflow-hidden">
+        {(['external', 'internal'] as const).map(m => (
+          <button key={m} onClick={() => setMode(m)}
+            className="flex-1 py-1.5 text-[11px] font-medium transition-colors"
+            style={{
+              background: mode === m ? 'var(--accent-teal)' : 'var(--bg-input)',
+              color: mode === m ? 'white' : 'var(--text-muted)',
+            }}>
+            {m === 'external' ? 'URL' : 'Internal Link'}
           </button>
-        </div>
+        ))}
       </div>
+
+      {mode === 'external' ? (
+        <div className="flex flex-col gap-2 p-3 rounded-[var(--radius-md)] border border-[var(--border)]"
+          style={{ background: 'var(--bg-input)' }}>
+          <input value={title} onChange={e=>setTitle(e.target.value)}
+            placeholder="Title (optional)"
+            className="h-7 px-2 rounded-[var(--radius-sm)] border border-[var(--border)] text-[12px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--border-active)] outline-none bg-transparent"/>
+          <div className="flex gap-2">
+            <input value={url} onChange={e=>setUrl(e.target.value)}
+              onKeyDown={e=>e.key==='Enter'&&addExternal()}
+              placeholder="https://…"
+              className="flex-1 h-7 px-2 rounded-[var(--radius-sm)] border border-[var(--border)] text-[12px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--border-active)] outline-none bg-transparent"/>
+            <button onClick={addExternal}
+              className="px-3 h-7 rounded-[var(--radius-sm)] bg-[var(--accent-orange)] text-white text-[11px] font-medium hover:bg-[var(--accent-orange-dim)] transition-colors">
+              <Plus size={12}/>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="relative">
+          <input value={query} onChange={e=>setQuery(e.target.value)}
+            placeholder="Search beats and outlines…"
+            className="w-full h-8 px-3 rounded-[var(--radius-md)] border border-[var(--border)] text-[12px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--border-active)] outline-none"
+            style={{ background: 'var(--bg-input)' }}/>
+          {internalResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 rounded-[var(--radius-md)] border border-[var(--border-active)] overflow-hidden z-10"
+              style={{ background: 'var(--bg-secondary)', boxShadow: 'var(--shadow-modal)' }}>
+              {internalResults.map(r => (
+                <button key={r.id} onClick={() => addInternal(r)}
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2 text-left hover:bg-[var(--accent-teal-10)] transition-colors">
+                  <span className="text-[12px] text-[var(--text-primary)] truncate">{r.label}</span>
+                  <span className="text-[10px] text-[var(--text-muted)] flex-shrink-0">{r.sub}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {beat.bookmarks.length === 0 ? (
         <p className="text-[12px] text-[var(--text-muted)] text-center py-4">No bookmarks yet.</p>
@@ -208,14 +280,17 @@ function BookmarksPanel({ beat }: { beat: Beat }) {
           <div key={bm.id} className="flex items-center gap-2 p-2.5 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-card)]">
             <div className="flex-1 min-w-0">
               <p className="text-[12px] text-[var(--text-primary)] truncate">{bm.title}</p>
-              {bm.url && <p className="text-[10px] text-[var(--text-muted)] truncate">{bm.url}</p>}
+              <p className="text-[10px] text-[var(--text-muted)] truncate">
+                {bm.type === 'external' ? bm.url : `→ ${bm.targetType}`}
+              </p>
             </div>
-            {bm.url && (
-              <a href={bm.url} target="_blank" rel="noopener noreferrer"
-                className="p-1.5 rounded text-[var(--text-muted)] hover:text-[var(--accent-teal)] transition-colors">
-                <ExternalLink size={12}/>
-              </a>
-            )}
+            <button onClick={() => navigate(bm)}
+              className="p-1.5 rounded text-[var(--text-muted)] hover:text-[var(--accent-teal)] transition-colors"
+              title={bm.type === 'internal' ? 'Navigate to' : 'Open link'}>
+              {bm.type === 'internal'
+                ? <ArrowRight size={12}/>
+                : <ExternalLink size={12}/>}
+            </button>
             <button onClick={() => updateBeat(beat.id, { bookmarks: beat.bookmarks.filter(b=>b.id!==bm.id) })}
               className="p-1.5 rounded text-[var(--text-muted)] hover:text-[var(--status-blocked)] transition-colors">
               <X size={12}/>

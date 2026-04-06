@@ -3,8 +3,9 @@ import React from 'react'
 import {
   ReactFlow, addEdge, MiniMap, Controls, Background, BackgroundVariant,
   useNodesState, useEdgesState,
-  type Node, type Edge, type Connection, type NodeTypes,
+  type Edge, type Connection, type NodeTypes,
 } from '@xyflow/react'
+import type { Node as FlowNode } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useBoundStore, useBeats } from '../../store'
 import { useShallow } from 'zustand/shallow'
@@ -33,7 +34,7 @@ function BeatNode({ data }: { data: { label: string; labelColour: string; synops
 
 const NODE_TYPES: NodeTypes = { beatNode: BeatNode as never }
 
-function beatsToNodes(beats: Beat[], savedMap: Record<string, { x: number; y: number }>): Node[] {
+function beatsToNodes(beats: Beat[], savedMap: Record<string, { x: number; y: number }>): FlowNode[] {
   return beats.map((b, i) => {
     const saved = savedMap[b.id]
     return {
@@ -62,7 +63,9 @@ export function MindmapView({ outlineId }: { outlineId: string }) {
     return m
   }, [savedNodes])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialNodes = React.useMemo(() => beatsToNodes(beats, savedPosMap), [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialEdges: Edge[] = React.useMemo(() => savedEdges.map(e => ({
     ...e, animated: true,
     style: { stroke: 'var(--accent-teal)', strokeWidth: 2 },
@@ -96,7 +99,7 @@ export function MindmapView({ outlineId }: { outlineId: string }) {
   }, [beats.length]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Persist node positions on drag stop (avoids setState-in-render loop)
-  const onNodeDragStop = useCallback((_: React.MouseEvent, node: Node) => {
+  const onNodeDragStop = useCallback((_: React.MouseEvent, node: FlowNode) => {
     setNodes(ns => {
       const updated = ns.map(n => n.id === node.id ? { ...n, position: node.position } : n)
       setMindmapNodes(outlineId, updated.map(n => ({
@@ -120,7 +123,7 @@ export function MindmapView({ outlineId }: { outlineId: string }) {
     toast('Connection created')
   }, [setEdges, outlineId, setMindmapEdges, toast])
 
-  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+  const onNodeClick = useCallback((_: React.MouseEvent, node: FlowNode) => {
     setSelectedBeat(node.id)
   }, [setSelectedBeat])
 

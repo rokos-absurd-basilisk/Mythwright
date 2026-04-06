@@ -69,9 +69,7 @@ export function OnboardingTutorial() {
   const markStep          = useBoundStore(s => s.markTutorialStep)
   const dismissTutorial   = useBoundStore(s => s.dismissTutorial)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    // Intentional: only run on mount. tutorialDismissed/Progress are refs inside effect.
     if (tutorialDismissed) return
     const allDone = ONBOARDING_STEPS.every(s => tutorialProgress.some(p => p.stepId === s.id))
     if (allDone) return

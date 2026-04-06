@@ -35,6 +35,7 @@ export default [
         confirm: 'readonly', alert: 'readonly',
         atob: 'readonly', btoa: 'readonly',
         React: 'readonly',
+        Node: 'readonly',  // React Flow Node type (imported as FlowNode)
         // React hooks (when imported individually)
         useState: 'readonly', useEffect: 'readonly', useCallback: 'readonly',
         useMemo: 'readonly', useRef: 'readonly', useContext: 'readonly',
