@@ -29,3 +29,7 @@ npm-debug.log*
 coverage/
 playwright-report/
 test-results/
+
+# Tauri / Rust
+src-tauri/target/
+src-tauri/gen/
